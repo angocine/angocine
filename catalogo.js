@@ -58,26 +58,39 @@ const catalogo = {
       ]
     },
     {
-      slug: "wandinha",
-      titulo: "Wandinha",
-      imagem: "wandinha.png",
-      descricao: "Após ser expulsa de várias escolas, Wandinha Addams é enviada para a Academia Nunca Mais, onde descobre segredos sombrios sobre sua família e sobre si mesma.",
-      temporadas: [
-        {
-          nome: "Temporada 1",
-          episodios: [
-            { titulo: "Ep. 1 — Piloto: O que é normal?", link: "https://mega.nz/wandinha1" },
-            { titulo: "Ep. 2 — O que é um amigo de verdade?", link: "https://mega.nz/wandinha2" },
-            { titulo: "Ep. 3 — A noite do baile Rave'N", link: "https://mega.nz/wandinha3" },
-            { titulo: "Ep. 4 — Segredos do passado", link: "https://mega.nz/wandinha4" },
-            { titulo: "Ep. 5 — O monstro e a garota", link: "https://mega.nz/wandinha5" },
-            { titulo: "Ep. 6 — O baile e o caos", link: "https://mega.nz/wandinha6" },
-            { titulo: "Ep. 7 — O verdadeiro culpado", link: "https://mega.nz/wandinha7" },
-            { titulo: "Ep. 8 — O fim… ou o começo?", link: "https://mega.nz/wandinha8" }
-          ]
-        }
+  slug: "wandinha",
+  titulo: "Wandinha",
+  imagem: "wandinha.png",
+  descricao: "Após ser expulsa de várias escolas, Wandinha Addams é enviada para a Academia Nunca Mais, onde descobre segredos sombrios sobre sua família e sobre si mesma.",
+  temporadas: [
+    {
+      nome: "Temporada 1",
+      episodios: [
+        { titulo: "Ep. 1 — Piloto: O que é normal?", link: "https://mega.nz/file/PkIlEDgR#gfqb6u5UAGZIJ0bYeTY79HSPVH_MtxYwQLtozuLJEBQ" },
+        { titulo: "Ep. 2 — O que é um amigo de verdade?", link: "https://mega.nz/file/PkIlEDgR#gfqb6u5UAGZIJ0bYeTY79HSPVH_MtxYwQLtozuLJEBQ" },
+        { titulo: "Ep. 3 — A noite do baile Rave'N", link: "https://mega.nz/file/qlwShbqQ#9v5owN7fg9I9_0qzTlvMr34Jn9g86SpRtlZfhQ2pS-I" },
+        { titulo: "Ep. 4 — Segredos do passado", link: "https://mega.nz/file/KpRFQKqK#bEtpCA1We_nGUGgEvJy8grv86AKMr9Qdy-wnnBLvZxs" },
+        { titulo: "Ep. 5 — O monstro e a garota", link: "https://mega.nz/file/S8YmxSAA#PlZ8EnXHF7pHfGoLO9Rm-NozG4XfbLFDOpZGftd0Qu8" },
+        { titulo: "Ep. 6 — O baile e o caos", link: "https://mega.nz/file/P8oXCB4A#Pp771c6GFxQR5mNO0GM7JQZ6Y5RMTmglQOL3ov13Nv4" },
+        { titulo: "Ep. 7 — O verdadeiro culpado", link: "https://mega.nz/file/X4gljCjI#h2PYKlc54WZBkuAFzJ5Vsz2savXqWWIUee8ad3sPYtA" },
+        { titulo: "Ep. 8 — O fim… ou o começo?", link: "https://mega.nz/file/T9RiATgK#hlginMxkO-ooA-pWUBcVNYo-mhD5XmCLNjFqbQI2ekc" }
+      ]
+    },
+    {
+      nome: "Temporada 2",
+      episodios: [
+        { titulo: "Ep. 1 — Novos Começos", link: "https://mega.nz/file/v0I3gbbT#IO_6ItSSXKB7IK7AWeZv1uAGelbWT_7VMc0ksa_In0g" },
+        { titulo: "Ep. 2 — Ecos do Passado", link: "https://mega.nz/file/vgIQkJAJ#YXeSmE3iBNB-TrUeg__9jVnZB0klCuns8ymjxR7-cMw" },
+        { titulo: "Ep. 3 — A Noite Sombria", link: "https://mega.nz/file/TshG2Loa#aJ9yGnSZQVaW635qTIsnWuoNmqVnTo2-TC0d7GLmmps" },
+        { titulo: "Ep. 4 — Segredos da Academia", link: "https://mega.nz/file/LtxihB4C#T5ZYXoxlr-93ZLzo6wgWX3It39Afi11au7U0ksMW-eE" },
+        { titulo: "Ep. 5 — O Retorno de Enid", link: "https://mega.nz/file/P0Iy0TjR#FINmznc0UEmVb1QySMdsdmgCYOPN1Pf7VPvXyFCFVks" },
+        { titulo: "Ep. 6 — O Mistério da Lua Sangrenta", link: "https://mega.nz/file/nxICgS4A#BbmMRBAhY46g4opZaoRTSabKTFroWagL87VFVAxdOKY" },
+        { titulo: "Ep. 7 — Sombras e Verdades", link: "https://mega.nz/file/2wgEgTzJ#0XHtk0kka_xJwNWpHpGCORfVa6rsBoWiu2ZuSJnc23A" },
+        { titulo: "Ep. 8 — Fim da Escuridão", link: "https://mega.nz/file/PwxEXLbJ#cOPOlgblpsf9-92v9HsVQkniQtABVl6dbk991LIjkcY" }
       ]
     }
+  ]
+}
   ],
 
   // 🎬 Filmes
