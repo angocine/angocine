@@ -28,16 +28,16 @@ const catalogo = {
       ]
     },
     {
-      slug: "prison-break",
-      titulo: "Prison Break",
-      imagem: "https://upload.wikimedia.org/wikipedia/en/4/46/Prison_Break_season_1_dvd.jpg",
+      slug: "Robin-hood",
+      titulo: "Robin Hood 2025",
+      imagem: "https://i.postimg.cc/jqvJsY7d/908834468ebed47e73cb556d506ee660.jpg",
       descricao: "Michael Scofield planeja escapar da prisão para salvar o irmão injustamente condenado.",
       temporadas: [
         {
           nome: "Temporada 1",
           episodios: [
-            { titulo: "Ep. 1 — Piloto", link: "https://mega.nz/prison1" },
-            { titulo: "Ep. 2 — Allen", link: "https://mega.nz/prison2" }
+            { titulo: "Ep. 1 — Piloto", link: "https://mega.nz/file/uBNwDJhL#4WFLBcHPrMZx14M7L7l95loK3WT5d9whyifc2HoBWRE" },
+            { titulo: "Ep. 2 — Allen", link: "https://mega.nz/file/LoJ2FQTb#YnoGEiMzqa7oMJBPJd0jVhGe0xhwb6g5wKvY8pfAVY4" }
           ]
         }
       ]
@@ -266,7 +266,7 @@ const catalogo = {
     {
       slug: "solo-leveling",
       titulo: "Solo Leveling",
-      imagem: "https://share.google/images/ssyr2ZtwKkZM1vT5S",
+      imagem: "https://upload.wikimedia.org/wikipedia/en/6/6c/Solo_Leveling_Volume_1_Cover.jpg",
       descricao: "Em um mundo onde caçadores lutam contra monstros, Sung Jin-Woo se torna o mais poderoso.",
       temporadas: [
         {
@@ -284,6 +284,22 @@ const catalogo = {
 
   // 💞 Doramas
   doramas: [
+     {
+      slug: "Apostando-alto",
+      titulo: "Apostsndo Alto",
+      imagem: "https://i.postimg.cc/Rhn73PfH/0c7a02422a8f2a5632346115be343294.jpg",
+      descricao: "Empenhados em transformar sonhos virtuais em realidade, jovens empreendedores competem por sucesso e amor no implacável mundo da alta tecnologia coreana..",
+      temporadas: [
+        {
+          nome: "Temporada Única",
+          episodios: [
+            { titulo: "Ep. 1 — O Encontro", link: "https://mega.nz/file/rPw03SCQ#5I5Z_gjnyW5fqIbCzR7akCxTIbCrNCZ95HoPGM-2Dj8" },
+            { titulo: "Ep. 2 — postagem em andamento", link: "https" }
+          ]
+        }
+      ]
+   },
+  
     {
       slug: "my-demon",
       titulo: "My Demon",
