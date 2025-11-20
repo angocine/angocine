@@ -4,6 +4,61 @@ const catalogo = {
 
   // 📺 Séries
   series: [
+  
+    
+    {
+      slug: "Robin-hood",
+      titulo: "Robin Hood 2025",
+      imagem: "https://i.postimg.cc/jqvJsY7d/908834468ebed47e73cb556d506ee660.jpg",
+      descricao: "Michael Scofield planeja escapar da prisão para salvar o irmão injustamente condenado.",
+      temporadas: [
+        {
+          nome: "Temporada 1",
+          episodios: [
+            { titulo: "Ep. 1 — Piloto", link: "https://mega.nz/file/uBNwDJhL#4WFLBcHPrMZx14M7L7l95loK3WT5d9whyifc2HoBWRE" },
+            { titulo: "Ep. 2 — Allen", link: "https://mega.nz/file/LoJ2FQTb#YnoGEiMzqa7oMJBPJd0jVhGe0xhwb6g5wKvY8pfAVY4" }
+          ]
+        }
+      ]
+    },
+    
+   {
+  slug: "chef-da-guerra",
+  titulo: "Chef da guerra 2025",
+  imagem: "https://i.postimg.cc/Hkh0CLBQ/Screenshot-20251120-175744.jpg",
+  descricao: "Chefe de Guerra acompanha a perspectiva indígena e a narrativa épica da unificação e colonização das ilhas havaianas no início do século XIX..",
+  temporadas: [
+    {
+      nome: "Temporada 1",
+      episodios: [
+        { titulo: "Ep. 1", link: "https://mega.nz/file/uEVmzJiJ#QKdG60XRQN24HsA6_xnTcv5VP9c25Q9CVRFphkyUrTk" },
+        { titulo: "Ep. 2", link: "https://mega.nz/file/KAcgnA7J#-EYWhiC-S273-RZlLUFRIvXiZccNgdGUjlUvLT_NTII" },
+        { titulo: "Ep. 3", link: "https://mega.nz/file/rF9XFJZK#Gk-AtpSgqjjePKs3_JqrpSMnHSc-H9ifbXktjTlvOjo" },
+        { titulo: "Ep. 4", link: "https://mega.nz/file/PYdxlAxA#XstTtd2djx6DJvzKi_wDFK76R0egmpOwN8op1lbM9Ms" },
+        { titulo: "Ep. 5", link: "https://mega.nz/file/Cdl1xBKB#hTaIuRh7ugToEa4sFrPKf8vkqZu-gJa_o8jSyU0LcYY" },
+        { titulo: "Ep. 6", link: "https://mega.nz/file/LQdWmI7Z#U7jJpCkmp4DmRQb75j_2wNZSxCsYbSdTiGq-IjdEb0c" },
+        { titulo: "Ep. 7", link: "https://mega.nz/file/iQkVwCSL#6Z2hxRAq8l8_eTJjvyfaLyX-3_4lKa46A6KVHTaZ92g" },
+        { titulo: "Ep. 8", link: "https://mega.nz/file/7RkgFZBT#xi7ZtjpUcUIktpr2M3VlUsvIw7Ydq_b7b5yCdkX3X_s" },
+        { titulo: "Ep. 9", link: "https://mega.nz/file/fck0yIyb#Ozsbb-9e_zRYhb-eCR-oFeGYhKRDxXITvdj6k4ewGLY" }
+      ]
+    }
+  ]
+},
+    {
+      slug: "the-last-of-us",
+      titulo: "The Last of Us",
+      imagem: "cvcgffhvvb.png",
+      descricao: "Em um mundo devastado por uma infecção, Joel e Ellie cruzam os Estados Unidos em busca de sobrevivência.",
+      temporadas: [
+        {
+          nome: "Temporada 1",
+          episodios: [
+            { titulo: "Ep. 1 — Quando Você Estiver Perdido na Escuridão", link: "https://mega.nz/tlou1" },
+            { titulo: "Ep. 2 — Infectado", link: "https://mega.nz/tlou2" }
+          ]
+        }
+      ]
+    },
     {
       slug: "game-of-thrones",
       titulo: "Game of Thrones",
@@ -23,36 +78,6 @@ const catalogo = {
             { titulo: "Ep. 8 — O Ponto Sem Retorno", link: "https://mega.nz/file/fgJRRZzQ#WqqgMWOHQvVYni9PyvOWyieY3ahoVQCMbZKnE6SHOdU" },
             { titulo: "Ep. 9 — Baelor", link: "https://mega.nz/file/ClQT3bKJ#F2BZowSeBbXYyM0kPr93Q0rWrd4Tpx7p3JcacXMNQmM" },
             { titulo: "Ep. 10 — Fogo e Sangue", link: "https://mega.nz/file/zwJ2jDJK#DOUq2RbCycb82VNoIMDZqQgoGQxfGAxtxkXgbEodvTE" }
-          ]
-        }
-      ]
-    },
-    {
-      slug: "Robin-hood",
-      titulo: "Robin Hood 2025",
-      imagem: "https://i.postimg.cc/jqvJsY7d/908834468ebed47e73cb556d506ee660.jpg",
-      descricao: "Michael Scofield planeja escapar da prisão para salvar o irmão injustamente condenado.",
-      temporadas: [
-        {
-          nome: "Temporada 1",
-          episodios: [
-            { titulo: "Ep. 1 — Piloto", link: "https://mega.nz/file/uBNwDJhL#4WFLBcHPrMZx14M7L7l95loK3WT5d9whyifc2HoBWRE" },
-            { titulo: "Ep. 2 — Allen", link: "https://mega.nz/file/LoJ2FQTb#YnoGEiMzqa7oMJBPJd0jVhGe0xhwb6g5wKvY8pfAVY4" }
-          ]
-        }
-      ]
-    },
-    {
-      slug: "the-last-of-us",
-      titulo: "The Last of Us",
-      imagem: "cvcgffhvvb.png",
-      descricao: "Em um mundo devastado por uma infecção, Joel e Ellie cruzam os Estados Unidos em busca de sobrevivência.",
-      temporadas: [
-        {
-          nome: "Temporada 1",
-          episodios: [
-            { titulo: "Ep. 1 — Quando Você Estiver Perdido na Escuridão", link: "https://mega.nz/tlou1" },
-            { titulo: "Ep. 2 — Infectado", link: "https://mega.nz/tlou2" }
           ]
         }
       ]
@@ -299,7 +324,35 @@ const catalogo = {
         }
       ]
    },
-  
+   {
+  slug: "o-manipulado",
+  titulo: "O manipulado 2025",
+  imagem: "https://i.postimg.cc/4yKZRy8K/FB-IMG-1763634806785.jpg",
+  descricao: "A vida de Taejoong vira de cabeça para baixo quando ele é preso injustamente por um crime brutal. Ao descobrir que tudo foi orquestrado por Yohan, ele busca vingança nessa trama cheia de ação.",
+  temporadas: [
+    {
+      nome: "Temporada Única",
+      episodios: [
+        { 
+          titulo: "Ep. 1 — O Encontro", 
+          link: "https://mega.nz/file/rPw03SCQ#5I5Z_gjnyW5fqIbCzR7akCxTIbCrNCZ95HoPGM-2Dj8" 
+        },
+        { 
+          titulo: "Ep. 2 — Desenvolvimento", 
+          link: "https://mega.nz/file/mRFTDZCK#MN8qtZDuKNfJIPTWF7QtmK1x9zEqE0xghqzNGSSKATM"
+        },
+        { 
+          titulo: "Ep. 3 — Conexões Partidas", 
+          link: "https://mega.nz/file/7Ql2kZ6I#5cy36eAPB3S9LBUa60UkzuBjs41ZQB2yzSBlAZlkD5Y"
+        },
+        { 
+          titulo: "Ep. 4 — À Beira da Verdade", 
+          link: "https://mega.nz/file/2MEwBZSC#nduHl8fUBN0WbgBgPyRRzsipKRPrM7MYjDvmHQKcUxg"
+        }
+      ]
+    }
+  ]
+},
     {
       slug: "my-demon",
       titulo: "My Demon",
