@@ -6,8 +6,8 @@
 <title>Angocine — Método de Pagamento</title>
 <style>
 :root{
-  --navy:#001f3f;     /* azul escuro igual ao index */
-  --navy-2:#003366;   /* azul secundário igual ao index */
+  --navy:#001f3f;
+  --navy-2:#003366;
   --accent:#00c8ff;
   --muted:#9fb6c6;
   --glass: rgba(255,255,255,0.03);
@@ -253,35 +253,45 @@ body{
 <div class="toast" id="toast">Copiado ✅</div>
 
 <script>
-// Carrossel com imagens de filmes
-const carouselData=[
-  {title:'A Última Noite',sub:'Suspense / Drama',img:'https://m.media-amazon.com/images/I/71P9G1WrYQL._AC_SL1500_.jpg'},
-  {title:'Viagem Estelar',sub:'Sci-fi • Em destaque',img:'https://m.media-amazon.com/images/I/81z0uYuwg6L._AC_SL1500_.jpg'},
-  {title:'Risos & Café',sub:'Comédia — Nova temporada',img:'https://m.media-amazon.com/images/I/81aK4dOXn0L._AC_SL1500_.jpg'},
-  {title:'Horizonte Vermelho',sub:'Ação • Imperdível',img:'https://m.media-amazon.com/images/I/81Uchc0o1sL._AC_SL1500_.jpg'},
-  {title:'Melodia do Mar',sub:'Romance • Em cartaz',img:'https://m.media-amazon.com/images/I/81gJmSL0wAL._AC_SL1500_.jpg'}
-];
-
-const methodsData=[
-  {name:'Multicaixa Express',desc:'Pagamento via app',icon:'M',key:'multicaixa'},
-  {name:'IBAN',desc:'Transferência',icon:'I',key:'iban'},
-  {name:'Unicoman',desc:'Plataforma/Ref',icon:'U',key:'unicoman'}
-];
-
-const DATA={
-  multicaixa:{title:'Multicaixa Express',subtitle:'Abra o app Multicaixa',code:'RHN-4521-22'},
-  iban:{title:'IBAN',subtitle:'Copie IBAN e referência',code:'AO06 0000 0000 0012 3456 7890'},
-  unicoman:{title:'Unicoman',subtitle:'Use a plataforma Unicoman',code:'UNIC-7782-XL'}
+// → Catálogo de filmes
+const catalogo = {
+  filmes: [
+    { titulo: 'A Última Noite', descricao: 'Suspense / Drama', imagem: 'https://upload.wikimedia.org/wikipedia/en/4/4e/Elio_film_poster.jpg' },
+    { titulo: 'Viagem Estelar', descricao: 'Sci-fi • Em destaque', imagem: 'johnwick.jpg' },
+    { titulo: 'Risos & Café', descricao: 'Comédia — Nova temporada', imagem: 'https://upload.wikimedia.org/wikipedia/pt/8/8f/TheIceRoad.jpeg' },
+    { titulo: 'Horizonte Vermelho', descricao: 'Ação • Imperdível', imagem: 'https://upload.wikimedia.org/wikipedia/pt/4/48/Culpa_nuestra.webp' },
+    { titulo: 'Melodia do Mar', descricao: 'Romance • Em cartaz', imagem: '3197518.jpg' }
+  ]
 };
 
-const WA_BASE='https://wa.me/244942292309';
+// → Carrossel baseado no catálogo
+const carouselData = catalogo.filmes.map(f => ({
+  title: f.titulo,
+  sub: f.descricao,
+  img: f.imagem
+}));
 
-// Carrossel
-const carousel=document.getElementById('carousel');
-carouselData.forEach((f,i)=>{
-  const div=document.createElement('div');
-  div.className='carousel-item';
-  div.innerHTML=`
+// → Métodos de pagamento
+const methodsData = [
+  { name: 'Multicaixa Express', desc: 'Pagamento via app', icon: 'M', key: 'multicaixa' },
+  { name: 'IBAN', desc: 'Transferência', icon: 'I', key: 'iban' },
+  { name: 'Envie Saldo', desc: 'Plataforma/Ref', icon: 'U', key: 'unicoman' }
+];
+
+const DATA = {
+  multicaixa: { title: 'Multicaixa Express', subtitle: 'Abra o app Multicaixa', code: '942115546' },
+  iban: { title: 'IBAN', subtitle: 'Copie IBAN e referência', code: '0040 0000 3067 8403 10157' },
+  unicoman: { title: 'Envie Saldo', subtitle: 'ENVIE SALDO DE VOZ NORMAL: UNITEL', code: '942115546' }
+};
+
+const WA_BASE = 'https://wa.me/244942292309';
+
+// → Carrossel
+const carousel = document.getElementById('carousel');
+carouselData.forEach(f => {
+  const div = document.createElement('div');
+  div.className = 'carousel-item';
+  div.innerHTML = `
     <img src="${f.img}" alt="${f.title}">
     <h4>${f.title}</h4>
     <p>${f.sub}</p>
@@ -289,55 +299,59 @@ carouselData.forEach((f,i)=>{
   carousel.appendChild(div);
 });
 
-// Métodos de pagamento
-const methodsContainer=document.getElementById('methods');
-methodsData.forEach(m=>{
-  const div=document.createElement('div');
-  div.className='method-card';
-  div.dataset.method=m.key;
-  div.innerHTML=`<div class="icon">${m.icon}</div><div><h3>${m.name}</h3><p>${m.desc}</p></div>`;
+// → Métodos de pagamento
+const methodsContainer = document.getElementById('methods');
+methodsData.forEach(m => {
+  const div = document.createElement('div');
+  div.className = 'method-card';
+  div.dataset.method = m.key;
+  div.innerHTML = `<div class="icon">${m.icon}</div><div><h3>${m.name}</h3><p>${m.desc}</p></div>`;
   methodsContainer.appendChild(div);
 });
 
-// Overlay logic
-const overlay=document.getElementById('overlay');
-const sheetTitle=document.getElementById('sheetTitle');
-const sheetCode=document.getElementById('sheetCode');
-const sheetAmount=document.getElementById('sheetAmount');
-const sheetCopy=document.getElementById('sheetCopy');
-const sheetConfirm=document.getElementById('sheetConfirm');
-const btnBack=document.getElementById('btnBack');
-const toast=document.getElementById('toast');
+// → Overlay
+const overlay = document.getElementById('overlay');
+const sheetTitle = document.getElementById('sheetTitle');
+const sheetCode = document.getElementById('sheetCode');
+const sheetAmount = document.getElementById('sheetAmount');
+const sheetCopy = document.getElementById('sheetCopy');
+const sheetConfirm = document.getElementById('sheetConfirm');
+const btnBack = document.getElementById('btnBack');
+const toast = document.getElementById('toast');
 
 function openSheet(key){
-  const data=DATA[key];
+  const data = DATA[key];
   if(!data) return;
-  sheetTitle.textContent=data.title;
-  sheetCode.textContent=data.code;
+  sheetTitle.textContent = data.title;
+  sheetCode.textContent = data.code;
   overlay.classList.add('open');
-  overlay.dataset.method=key;
+  overlay.dataset.method = key;
 }
+function closeSheet(){
+  overlay.classList.remove('open');
+  overlay.dataset.method='';
+}
+document.querySelectorAll('.method-card').forEach(c => c.addEventListener('click', ()=>openSheet(c.dataset.method)));
+btnBack.addEventListener('click', closeSheet);
 
-function closeSheet(){overlay.classList.remove('open');overlay.dataset.method='';}
-
-document.querySelectorAll('.method-card').forEach(c=>{
-  c.addEventListener('click',()=>openSheet(c.dataset.method));
+sheetCopy.addEventListener('click', async ()=>{
+  try{
+    await navigator.clipboard.writeText(sheetCode.textContent.trim());
+    toast.style.display='block';
+    setTimeout(()=>toast.style.display='none',1600);
+  } catch(e){
+    alert('Copiado: '+sheetCode.textContent);
+  }
 });
 
-btnBack.addEventListener('click',closeSheet);
-
-sheetCopy.addEventListener('click',async()=>{
-  try{await navigator.clipboard.writeText(sheetCode.textContent.trim());toast.style.display='block';setTimeout(()=>toast.style.display='none',1600);}catch(e){alert('Copiado: '+sheetCode.textContent);}
-});
-
-sheetConfirm.addEventListener('click',()=>{
-  const key=overlay.dataset.method;
-  const data=DATA[key];
-  const msg=encodeURIComponent(`Olá, confirmei o pagamento. Método: ${data.title} | Valor: ${sheetAmount.value} | Ref: ${data.code}`);
+sheetConfirm.addEventListener('click', ()=>{
+  const key = overlay.dataset.method;
+  const data = DATA[key];
+  const msg = encodeURIComponent(`Olá, confirmei o pagamento. Método: ${data.title} | Valor: ${sheetAmount.value} | Ref: ${data.code}`);
   window.open(WA_BASE+'?text='+msg,'_blank');
 });
 
-// Coverflow carousel
+// → Coverflow carousel
 let idx=0;
 function updateCarousel(){
   const items=document.querySelectorAll('.carousel-item');
@@ -345,11 +359,11 @@ function updateCarousel(){
   items.forEach((item,i)=>{
     const offset=(i-idx+n)%n;
     let scale=0.6, zIndex=0, xOffset=0, rotateY=0, opacity=0.5;
-    if(offset===0){scale=1;zIndex=3;xOffset=0;rotateY=0;opacity=1;}
-    if(offset===1){scale=0.8;zIndex=2;xOffset=120;rotateY=-25;opacity=0.8;}
-    if(offset===n-1){scale=0.8;zIndex=2;xOffset=-120;rotateY=25;opacity=0.8;}
-    if(offset===2){scale=0.7;zIndex=1;xOffset=240;rotateY:-30;opacity=0.6;}
-    if(offset===n-2){scale=0.7;zIndex=1;xOffset=-240;rotateY:30;opacity=0.6;}
+    if(offset===0){scale=1; zIndex=3; xOffset=0; rotateY=0; opacity=1;}
+    if(offset===1){scale=0.8; zIndex=2; xOffset=120; rotateY=-25; opacity=0.8;}
+    if(offset===n-1){scale=0.8; zIndex=2; xOffset=-120; rotateY=25; opacity=0.8;}
+    if(offset===2){scale=0.7; zIndex=1; xOffset=240; rotateY=-30; opacity=0.6;}
+    if(offset===n-2){scale=0.7; zIndex=1; xOffset=-240; rotateY=30; opacity=0.6;}
     item.style.transform=`translateX(${xOffset}px) scale(${scale}) rotateY(${rotateY}deg)`;
     item.style.zIndex=zIndex;
     item.style.opacity=opacity;
@@ -357,7 +371,7 @@ function updateCarousel(){
 }
 
 updateCarousel();
-setInterval(()=>{idx=(idx+1)%carouselData.length;updateCarousel();},2500);
+setInterval(()=>{idx=(idx+1)%carouselData.length; updateCarousel();},2500);
 </script>
 </body>
 </html>
