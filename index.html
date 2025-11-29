@@ -1,79 +1,235 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tela de Login</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0d1b2a, #1b263b);
-      height: 100vh;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      position: relative;
-    }
-    .container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 40px;
-      width: 320px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #e0e0e0;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-    }
-    input::placeholder { color: #bbb; }
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background-color: #1e90ff;
-      color: #fff;
-      font-size: 15px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover { background-color: #3a9df8; }
-    p { text-align: center; margin-top: 15px; font-size: 14px; }
-    a { color: #1e90ff; text-decoration: none; font-weight: 500; cursor: pointer; }
-    .hidden { display: none; }
-    .mensagem { text-align: center; margin-top: 15px; color: #90ee90; font-size: 14px; }
-    .voltar { position: absolute; top: 20px; left: 20px; color: #fff; text-decoration: none; font-size: 18px; font-weight: bold; }
-  </style>
-</head>
-<body>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Login ANGOCINE</title>
+<link href="https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================
+     FUNDO GRADIENTE + HEXÁGONOS
+  ============================ */
+  html, body {
+    margin: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    touch-action: manipulation;
+    overflow: hidden;
+  }
 
-  <div class="container" id="loginForm">
-    <h2>Login</h2>
-    <input type="email" id="loginEmail" placeholder="E-mail" />
-    <input type="password" id="loginSenha" placeholder="Palavra-passe" />
-    <button onclick="login()">Entrar</button>
-    <!-- Linha removida: criar conta -->
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0d1b2a, #89c2d9);
+    color: #fff;
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 200%;
+    height: 200%;
+    background-image: 
+      repeating-linear-gradient(120deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 60px),
+      repeating-linear-gradient(60deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 60px);
+    animation: hexMove 60s linear infinite;
+    z-index: 0;
+  }
+
+  @keyframes hexMove {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(-100px,-100px); }
+  }
+
+  /* BOLHAS ANIMADAS */
+  .bubbles span {
+    position: absolute;
+    display: block;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    bottom: -50px;
+    animation: rise 20s infinite;
+    opacity: 0.6;
+    z-index: 1;
+  }
+
+  .bubbles span:nth-child(1){ left:10%; width:10px; height:10px; animation-duration:12s;}
+  .bubbles span:nth-child(2){ left:30%; width:15px; height:15px; animation-duration:18s;}
+  .bubbles span:nth-child(3){ left:50%; width:18px; height:18px; animation-duration:22s;}
+  .bubbles span:nth-child(4){ left:70%; width:12px; height:12px; animation-duration:16s;}
+  .bubbles span:nth-child(5){ left:90%; width:15px; height:15px; animation-duration:14s;}
+
+  @keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity:0.6; }
+    50% { transform: translateY(-400px) scale(1.2); opacity:0.3; }
+    100% { transform: translateY(-800px) scale(0.8); opacity:0; }
+  }
+
+  /* ============================
+     LOGIN COMPACTO FIXO
+  ============================ */
+  .login-box {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 280px;
+    max-width: 90%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  /* LOGO COM EFEITO DE NATAL */
+  .logo-container {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    margin-bottom: 12px;
+  }
+
+  .logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    z-index: 2;
+    position: relative;
+    animation: glow 2s infinite alternate;
+  }
+
+  @keyframes glow {
+    0% { box-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000; }
+    50% { box-shadow: 0 0 10px #00ff00, 0 0 15px #00ff00; }
+    100% { box-shadow: 0 0 5px #ffcc00, 0 0 12px #ffcc00; }
+  }
+
+  /* NEVE SOBRE A IMAGEM */
+  .snowflakes {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 3;
+  }
+
+  .snowflakes div {
+    position: absolute;
+    color: #fff;
+    font-size: 12px;
+    top: -10px;
+    animation: fall 3s linear infinite;
+  }
+
+  .snowflakes div:nth-child(1) { left: 10%; animation-delay: 0s; }
+  .snowflakes div:nth-child(2) { left: 30%; animation-delay: 1s; }
+  .snowflakes div:nth-child(3) { left: 50%; animation-delay: 2s; }
+  .snowflakes div:nth-child(4) { left: 70%; animation-delay: 0.5s; }
+  .snowflakes div:nth-child(5) { left: 90%; animation-delay: 1.5s; }
+
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(90px) rotate(360deg); opacity: 0; }
+  }
+
+  h1 {
+    font-size: 1.7em;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  p {
+    font-size: 0.9em;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-radius: 25px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-size: 15px;
+    text-align: center;
+  }
+
+  input:focus {
+    background: rgba(255,255,255,0.22);
+    box-shadow: 0 0 10px #1e90ff;
+  }
+
+  input::placeholder {
+    color: #ccc;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    background-color: #ff1f1f;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  button:hover {
+    background-color: #e60000;
+    transform: translateY(-2px);
+  }
+
+  .mensagem {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #ff6b6b;
+    text-align: center;
+    min-height: 18px;
+  }
+
+  /* RESPONSIVO */
+  @media (max-width: 400px) {
+    h1 { font-size: 1.6em; }
+    p { font-size: 0.85em; }
+    .logo-container { width: 60px; height: 60px; }
+    input { font-size: 14px; padding: 10px 12px; }
+    button { font-size: 15px; padding: 12px; }
+  }
+</style>
+</head>
+
+<body>
+  <div class="bubbles">
+    <span></span><span></span><span></span><span></span><span></span>
   </div>
 
-  <!-- Registro removido completamente -->
-  
-  <!-- Firebase + Firestore + Sessão -->
+  <div class="login-box">
+    <div class="logo-container">
+      <img src="Screenshot_20250922-105230-removebg-preview-removebg-preview.png" alt="Logo ANGOCINE">
+      <div class="snowflakes" aria-hidden="true">
+        <div>❄</div><div>❄</div><div>❄</div><div>❄</div><div>❄</div>
+      </div>
+    </div>
+
+    <h1>ANGOCINE</h1>
+    <p>O MELHOR STREAMING ANGOLANO ♥</p>
+
+    <input type="email" id="loginEmail" placeholder="E-mail">
+    <input type="password" id="loginSenha" placeholder="Palavra-passe">
+
+    <button onclick="login()">Entrar</button>
+    <div class="mensagem" id="mensagem"></div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
@@ -89,28 +245,28 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const mensagemEl = document.getElementById("mensagem");
 
-    // Login + Sessão de 2 horas
-    window.login = function() {
-      const email = document.getElementById('loginEmail').value;
-      const senha = document.getElementById('loginSenha').value;
+    window.login = function () {
+      const email = document.getElementById("loginEmail").value;
+      const senha = document.getElementById("loginSenha").value;
+
+      mensagemEl.textContent = "";
 
       signInWithEmailAndPassword(auth, email, senha)
-        .then(userCredential => {
+        .then((userCredential) => {
           const user = userCredential.user;
-          const tempoExpiracao = Date.now() + (2 * 60 * 60 * 1000); // 2 horas
+          const expira = Date.now() + (2 * 60 * 60 * 1000);
           sessionStorage.setItem("usuarioLogado", JSON.stringify({
             email: user.email,
-            expiraEm: tempoExpiracao
+            expiraEm: expira
           }));
-
-          alert("Login realizado com sucesso!");
           window.location.href = "home.html";
         })
-        .catch(error => {
-          alert("Erro: " + error.message);
+        .catch((error) => {
+          mensagemEl.textContent = "Erro: " + error.message;
         });
-    };
+    }
   </script>
 </body>
 </html>

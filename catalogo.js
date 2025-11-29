@@ -45,6 +45,24 @@ const catalogo = {
   ]
 },
     {
+  slug: "misterio-em-cemetery-road",
+  titulo: "Mistério em Cemetery Road2 2025",
+  imagem: "https://i.postimg.cc/SQzp6fHM/Screenshot-20251129-190156.jpg",
+  descricao: "Mistério em Cemetery Road é um thriller de suspense britânico. A trama começa quando uma explosão destrói uma casa em um subúrbio aparentemente tranquilo de Oxford e uma menina desaparece — a vizinha Sarah Tucker fica obcecada em encontrá-la e recruta a investigadora particular Zoë Boehm. O que parecia ser um caso isolado rapidamente se transforma numa conspiração perigosa, envolvendo desaparecimentos misteriosos, identidades falsas e segredos sombrios que indicam que pessoas consideradas mortas podem estar vivas, enquanto o perigo ronda todo mundo. A narrativa mistura investigação, tensão e suspense psicológico, fazendo o espectador duvidar de tudo. 🎬",  
+  temporadas: [
+    {
+      nome: "Temporada 1",
+      episodios: [
+        { titulo: "Ep. 1 — Almost True", link: "https://mega.nz/file/PYEDwawa#y7ccQtHp0JvDWEcUESe2R1oQFWHGZZ7Dwzj5xGmvE-0" },
+        { titulo: "Ep. 2 — A Kind of Grief", link: "https://mega.nz/file/idlzyCoS#WEnka4cfyH3KlF-KPPye0wlblB2Xnt-pAxYqngVEer8" },
+        { titulo: "Ep. 3 — Trabalho Sujo", link: "https://mega.nz/file/OA1WiLxR#miffGhWbNRMHT9Z_9mPQ7OSY4LIc-orhxwSBDmQP7i4" },
+        { titulo: "Ep. 4 — My Friends Don’t Like Me", link: "https://mega.nz/file/mZ0iEabB#MM8xdaFdLw-jeoiIOUFhk19vJeGtZYewNYxeJC5LZGs" }
+      ]
+    }
+  ]
+},
+    
+    {
       slug: "the-last-of-us",
       titulo: "The Last of Us",
       imagem: "cvcgffhvvb.png",
@@ -133,6 +151,36 @@ const catalogo = {
       imagem: "johnwick.jpg",
       descricao: "John Wick enfrenta a Alta Cúpula em uma guerra sangrenta por liberdade.",
       link: "https://mega.nz/johnwick4"
+    },
+       {
+      slug: "o-ritual",
+      titulo: "O ritual 2025",
+      imagem: "https://upload.wikimedia.org/wikipedia/en/a/af/The_Ritual_%282025%29_poster.jpg",
+      descricao: "The Ritual is a 2025 American horror film directed by David Midell and written by Midell and Enrico Natale. Based on a true story, it follows priests Theophilus Riesinger (Al Pacino) and Joseph Steiger (Dan Stevens) as they attempt to put aside their differences to save an allegedly possessed young woman Emma Schmidt (Abigail Cowen) through a series of exorcisms. The film was released by XYZ Films on June 6, 2025, and received generally negative reviews from critics.",
+      link: "https://mega.nz/file/3VMH2S5J#HfY_A87ARLkXVu2o7Ucse5cKKXLrI-EXIkbur2LQbhg"
+    },
+      {
+      slug: "segredos-no-ar",
+      titulo: "Segredo no ar 2020",
+      imagem: "https://i.postimg.cc/W1h2yq49/Screenshot-20251129-195758.jpg",
+      descricao: "Após a morte de um colega de trabalho, uma jovem que trabalha para uma companhia aérea privada descobre o segredo do proprietário e se torna o próximo alvo.",
+      link: "https://mega.nz/file/DdlQxL6Y#YCl072MyRvoZjzkk7RdipXt-xHN7KgOzDsMX5pRqCFA"
+    },
+    
+     {
+      slug: "planos-em-familia_2",
+      titulo: "Planos em família 2",
+      imagem: "https://i.postimg.cc/vH7qd04Y/Screenshot-20251129-200442.jpg",
+      descricao: "Dan planejou a viagem perfeita de férias para Londres, mas seus planos não saem como o esperado quando uma figura do passado retorna com negócios inacabados.",
+      link: "https://mega.nz/file/mZ1Q2Q6R#u3nRDXP2uqMAgcxjPvu7s6oo7bNT1_uSkkPLF8ufVmI"
+    },
+    
+      {
+      slug: "operacao-beijo-de-natal",
+      titulo: "Operação Beijo de natal 2024",
+      imagem: "https://i.postimg.cc/7bryQzWf/beijo-696x392-jpg.webp",
+      descricao: "Uma decoradora quer ajudar a organizar um tradicional evento beneficente em sua cidade natal. Mas a chegada de uma paixão da juventude ameaça os planos e o coração dela",
+      link: "https://mega.nz/file/iRFy3RTA#wZSWbcACZlKPTa4tarLPnHd-HUoP2dAdhBwgC-NBE0o"
     },
     {
       slug: "Nossa-culpa",
