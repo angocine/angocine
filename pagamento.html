@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
+      <script>
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogado"));
+  if (!usuario || Date.now() > usuario.expiraEm) {
+    sessionStorage.removeItem("usuarioLogado");
+    window.location.href = "index.html";
+  }
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Angocine — Método de Pagamento</title>

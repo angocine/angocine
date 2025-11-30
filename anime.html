@@ -13,6 +13,11 @@
       --accent:#1e90ff;
       --accent-hover:#ff8c00;
       --muted:#cfcfcf;
+
+      --genre-bg-a:#1e90ff;
+      --genre-bg-b:#ff8c00;
+      --genre-bg-c:#2ecc71;
+      --genre-bg-d:#9b59b6;
     }
 
     *{box-sizing:border-box;}
@@ -21,10 +26,10 @@
       font-family: Arial, sans-serif;
       background: var(--bg-1);
       color: #fff;
-      padding-bottom: 80px;
+      padding-bottom: 0; /* sem bottom-nav */
     }
 
-    /* topo centralizado */
+    /* 🔹 Top Bar */
     .top-bar {
       background: var(--panel-2);
       display: flex;
@@ -47,6 +52,7 @@
       flex: 1;
     }
 
+    /* 🔹 Banner */
     .banner {
       width: 100%;
       display: flex;
@@ -73,8 +79,13 @@
       display: block;
     }
 
+    /* 🔹 Painel descritivo */
     .info {
       padding: 12px 16px;
+      background: var(--panel);
+      margin: 12px;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
     .info h1 {
       font-size: clamp(20px, 3.2vw, 28px);
@@ -92,7 +103,27 @@
       font-size: 14px;
     }
 
-    #temporadas-container { padding: 6px 12px 90px 12px; }
+    /* 🔹 Gêneros abaixo do texto */
+    .generos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .genero {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .g1 { background: var(--genre-bg-a); }
+    .g2 { background: var(--genre-bg-b); }
+    .g3 { background: var(--genre-bg-c); }
+    .g4 { background: var(--genre-bg-d); }
+
+    /* 🔹 Temporadas e episódios */
+    #temporadas-container { padding: 6px 12px 12px 12px; }
     .temporada {
       background: var(--panel);
       margin: 12px 0;
@@ -162,31 +193,6 @@
     }
     .botao:hover { background: var(--accent-hover); transform: translateY(-1px); }
 
-    .bottom-nav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 60px;
-      background: var(--panel-2);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      gap: 8px;
-      border-top: 1px solid rgba(255,255,255,0.03);
-      z-index: 999;
-    }
-    .bottom-nav a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-    .bottom-nav a i { font-size: 18px; }
-
     @media (max-width:420px){
       .banner .capa { height: 320px; width: 200px; }
       .episodio p { font-size: 13px; }
@@ -197,45 +203,38 @@
 </head>
 <body>
 
+  <!-- 🔹 Top Bar -->
   <header class="top-bar">
     <a href="home.html" class="voltar" title="Voltar">←</a>
     <h1>ANGOCINE</h1>
   </header>
 
+  <!-- 🔹 Banner -->
   <div class="banner">
     <div class="capa">
       <img id="serie-imagem" src="" alt="Capa do anime">
     </div>
   </div>
 
+  <!-- 🔹 Informações da série -->
   <div class="info">
     <h1 id="serie-titulo">Título</h1>
     <div class="votos" id="serie-votos" style="display:none;">⭐ 0 votos</div>
     <p id="serie-descricao">Descrição</p>
+    <div id="serie-generos" class="generos"></div>
   </div>
 
+  <!-- 🔹 Temporadas -->
   <div id="temporadas-container"></div>
-
-  <nav class="bottom-nav">
-    <a href="home.html"><i class="fa">&#xf015;</i><span>Início</span></a>
-    <a href="#"><i class="fa">&#xf008;</i><span>Filmes</span></a>
-    <a href="#"><i class="fa">&#xf6d5;</i><span>Animes</span></a>
-    <a href="#"><i class="fa">&#xf26c;</i><span>Doramas</span></a>
-    <a href="resultado.html"><i class="fa">&#xf002;</i><span>Buscar</span></a>
-  </nav>
 
   <script src="catalogo.js"></script>
   <script>
     (function(){
       const params = new URLSearchParams(window.location.search);
       const slug = params.get("slug");
-      const todas = [
-        ...(catalogo.series || []),
-        ...(catalogo.filmes || []),
-        ...(catalogo.animes || []),
-        ...(catalogo.doramas || [])
-      ];
+      const todas = [...(catalogo.animes || [])];
       const item = todas.find(i => i.slug === slug);
+
       if (!item) {
         document.getElementById('temporadas-container').innerHTML =
           "<p style='color:#fff;text-align:center;padding:20px;'>Conteúdo não encontrado.</p>";
@@ -246,6 +245,16 @@
       document.getElementById('serie-titulo').textContent = item.titulo;
       document.getElementById('serie-descricao').textContent = item.descricao;
 
+      const genBox = document.getElementById('serie-generos');
+      if (item.generos) {
+        const generosArray = Array.isArray(item.generos)
+          ? item.generos
+          : item.generos.split(',').map(g => g.trim());
+        genBox.innerHTML = generosArray
+          .map((g, i) => `<span class="genero g${(i%4)+1}">${g}</span>`)
+          .join('');
+      }
+
       const container = document.getElementById('temporadas-container');
       container.innerHTML = "";
 
@@ -254,7 +263,7 @@
         return;
       }
 
-      item.temporadas.forEach((temp, idx) => {
+      item.temporadas.forEach((temp) => {
         const bloco = document.createElement('div');
         bloco.className = 'temporada';
         const header = document.createElement('div');
@@ -292,5 +301,6 @@
       });
     })();
   </script>
+
 </body>
 </html>

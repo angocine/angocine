@@ -9,6 +9,7 @@ const catalogo = {
     {
       slug: "Robin-hood",
       titulo: "Robin Hood 2025",
+       generos: "Ação, Mistério, Aventura",
       imagem: "https://i.postimg.cc/jqvJsY7d/908834468ebed47e73cb556d506ee660.jpg",
       descricao: "Michael Scofield planeja escapar da prisão para salvar o irmão injustamente condenado.",
       temporadas: [
@@ -25,6 +26,7 @@ const catalogo = {
    {
   slug: "chef-da-guerra",
   titulo: "Chef da guerra 2025",
+  generos: "Ação, Mistério, Aventura",
   imagem: "https://i.postimg.cc/Hkh0CLBQ/Screenshot-20251120-175744.jpg",
   descricao: "Chefe de Guerra acompanha a perspectiva indígena e a narrativa épica da unificação e colonização das ilhas havaianas no início do século XIX..",
   temporadas: [
@@ -141,6 +143,7 @@ const catalogo = {
     {
       slug: "elio",
       titulo: "Elio 2025",
+       generos: "Ação, Animação, Aventura",
       imagem: "https://upload.wikimedia.org/wikipedia/en/4/4e/Elio_film_poster.jpg",
       descricao: "Elio é um filme de animação americano produzido pela Pixar Animation Studios e distribuído pela Walt Disney Studios Motion Pictures.",
       link: "https://mega.nz/file/mow3hZxT#A7D9b9O97IJml8rdD0EJxiiXEcVSU1LhxKaS8XbcLoY"
@@ -148,6 +151,7 @@ const catalogo = {
     {
       slug: "john-wick-4",
       titulo: "John Wick 4: Baba Yaga",
+      generos: "Ação, crime,",
       imagem: "johnwick.jpg",
       descricao: "John Wick enfrenta a Alta Cúpula em uma guerra sangrenta por liberdade.",
       link: "https://mega.nz/johnwick4"
@@ -155,6 +159,7 @@ const catalogo = {
        {
       slug: "o-ritual",
       titulo: "O ritual 2025",
+      generos: "Mistério, Terror",
       imagem: "https://upload.wikimedia.org/wikipedia/en/a/af/The_Ritual_%282025%29_poster.jpg",
       descricao: "The Ritual is a 2025 American horror film directed by David Midell and written by Midell and Enrico Natale. Based on a true story, it follows priests Theophilus Riesinger (Al Pacino) and Joseph Steiger (Dan Stevens) as they attempt to put aside their differences to save an allegedly possessed young woman Emma Schmidt (Abigail Cowen) through a series of exorcisms. The film was released by XYZ Films on June 6, 2025, and received generally negative reviews from critics.",
       link: "https://mega.nz/file/3VMH2S5J#HfY_A87ARLkXVu2o7Ucse5cKKXLrI-EXIkbur2LQbhg"
@@ -162,6 +167,7 @@ const catalogo = {
       {
       slug: "segredos-no-ar",
       titulo: "Segredo no ar 2020",
+      generos: "Ação, Mistério",
       imagem: "https://i.postimg.cc/W1h2yq49/Screenshot-20251129-195758.jpg",
       descricao: "Após a morte de um colega de trabalho, uma jovem que trabalha para uma companhia aérea privada descobre o segredo do proprietário e se torna o próximo alvo.",
       link: "https://mega.nz/file/DdlQxL6Y#YCl072MyRvoZjzkk7RdipXt-xHN7KgOzDsMX5pRqCFA"
@@ -170,14 +176,17 @@ const catalogo = {
      {
       slug: "planos-em-familia_2",
       titulo: "Planos em família 2",
+      generos: "Ação, Comédia, Aventura",
       imagem: "https://i.postimg.cc/vH7qd04Y/Screenshot-20251129-200442.jpg",
       descricao: "Dan planejou a viagem perfeita de férias para Londres, mas seus planos não saem como o esperado quando uma figura do passado retorna com negócios inacabados.",
       link: "https://mega.nz/file/mZ1Q2Q6R#u3nRDXP2uqMAgcxjPvu7s6oo7bNT1_uSkkPLF8ufVmI"
+      
     },
     
       {
       slug: "operacao-beijo-de-natal",
       titulo: "Operação Beijo de natal 2024",
+      generos: "Comédia, Romance,",
       imagem: "https://i.postimg.cc/7bryQzWf/beijo-696x392-jpg.webp",
       descricao: "Uma decoradora quer ajudar a organizar um tradicional evento beneficente em sua cidade natal. Mas a chegada de uma paixão da juventude ameaça os planos e o coração dela",
       link: "https://mega.nz/file/iRFy3RTA#wZSWbcACZlKPTa4tarLPnHd-HUoP2dAdhBwgC-NBE0o"
@@ -185,6 +194,7 @@ const catalogo = {
     {
       slug: "Nossa-culpa",
       titulo: "Nossa culpa 2025",
+      generos: " Romance, Aventura",
       imagem: "https://upload.wikimedia.org/wikipedia/pt/4/48/Culpa_nuestra.webp",
       descricao: "O casamento de Jenna e Lion proporciona o tão esperado reencontro entre Noah e Nick algum tempo após o término.",
       link: "https://mega.nz/file/y8hXCATa#dPlMg84P8PrEO1CrRq1JcWqLdxAgKbdiSZXeYev1Now"
@@ -192,6 +202,7 @@ const catalogo = {
       {
       slug: "missão-resgate",
       titulo: "Missão resgate 2025",
+      generos: "Ação, Aventura",
       imagem: "https://upload.wikimedia.org/wikipedia/pt/8/8f/TheIceRoad.jpeg",
       descricao: "Mike McCann, um caminhoneiro perito em viajar por estradas de gelo, vai ao Nepal para cumprir o último desejo do irmão: espalhar suas cinzas no Monte Everest.",
       link: "https://mega.nz/file/r0oRhTZZ#FC6mw1dawr0anhzX27y_-cZkrg73lrTYCub8ToO62L4"
@@ -199,6 +210,7 @@ const catalogo = {
      {
       slug: "Lilo-e-Stitch",
       titulo: "Lilo e Stitch 2025",
+      generos: " Animação, Aventura",
       imagem: "https://upload.wikimedia.org/wikipedia/en/5/56/Lilo_%26_Stitch_2025_Theatrical_Poster.jpg",
       descricao: "Lilo & Stitch é um filme de comédia de ficção científica americano dirigido por Dean Fleischer Camp e escrito por Chris Kekaniokalani Bright e Mike Van Waes. Produzido pela Walt Disney Pictures e Rideback, o filme é um remake.",
       link: "https://mega.nz/file/OlgVFbzL#D83UGm6unuXQTuviSCQWT9BjeDl9tB4tf1sIDxYwmCc"
@@ -214,6 +226,7 @@ const catalogo = {
        {
       slug: "os-caras-malvados-2",
       titulo: "Os caras malvados 2 2025",
+      generos: "Ação, Animação, Aventura",
       imagem: "https://upload.wikimedia.org/wikipedia/pt/b/b9/The_Bad_Guys_2_%282025%29_teaser_poster.jpg",
       descricao: "The Bad Guys 2 é um filme de animação estadunidense do gênero comédia lançado em 2025, produzido pela DreamWorks Animation e distribuído pela Universal Pictures",
       link: "https://mega.nz/file/3wA1DaIS#TrAxuhVavm2k0xFY2idF7TR5eDkc343n3Fpqf_uMnAU"
@@ -221,6 +234,7 @@ const catalogo = {
        {
       slug: "senhor-do-vento",
       titulo: "Senhor do vento 2025",
+      generos: "Ação, Aventura",
       imagem: "images (5).jpeg",
       descricao: "Fedor Konyukhov é um renomado explorador russo que se prepara para realizar sua mais ambiciosa empreitada: dar a volta ao mundo em um balão de ar quente em apenas 11 dias.",
       link: "https://mega.nz/file/z0xR3LQZ#n3V_e0OsHgbzvZuKsscs93pNN2CR624yu34NVEgjBkk"
@@ -228,6 +242,7 @@ const catalogo = {
      {
       slug: "presente-maldito",
       titulo: "Presente maldito 2025",
+      
       imagem: "20251014-presente-maldito-papo-de-cinema-cartaz.webp",
       descricao: "Polly recebe uma caixa misteriosa de um visitante inesperado no meio da noite, juntamente com uma instrução simples.",
       link: "https://mega.nz/file/v9hm0K6L#ECvd8pSw9HW9CQBfrk8wnREAO7mq47y-J8Q9e1QTA8g"
@@ -309,6 +324,7 @@ const catalogo = {
     {
       slug: "naruto",
       titulo: "Naruto",
+      generos: "Ação, Aventura",
       imagem: "https://upload.wikimedia.org/wikipedia/en/9/94/NarutoCoverTankobon1.jpg",
       descricao: "Naruto Uzumaki sonha em se tornar o Hokage e proteger sua vila.",
       temporadas: [
@@ -324,6 +340,7 @@ const catalogo = {
     {
       slug: "attack-on-titan",
       titulo: "Attack on Titan",
+      generos: "Ação, Aventura",
       imagem: "ataque.jpg",
       descricao: "A humanidade luta pela sobrevivência contra titãs gigantes que devoram pessoas.",
       temporadas: [
@@ -339,6 +356,7 @@ const catalogo = {
     {
       slug: "solo-leveling",
       titulo: "Solo Leveling",
+      generos: "Ação, Aventura",
       imagem: "https://upload.wikimedia.org/wikipedia/en/6/6c/Solo_Leveling_Volume_1_Cover.jpg",
       descricao: "Em um mundo onde caçadores lutam contra monstros, Sung Jin-Woo se torna o mais poderoso.",
       temporadas: [
@@ -375,6 +393,7 @@ const catalogo = {
    {
   slug: "o-manipulado",
   titulo: "O manipulado 2025",
+  generos: "Ação, Aventura",
   imagem: "https://i.postimg.cc/4yKZRy8K/FB-IMG-1763634806785.jpg",
   descricao: "A vida de Taejoong vira de cabeça para baixo quando ele é preso injustamente por um crime brutal. Ao descobrir que tudo foi orquestrado por Yohan, ele busca vingança nessa trama cheia de ação.",
   temporadas: [
