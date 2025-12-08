@@ -1,90 +1,99 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <script>
-    const usuario = JSON.parse(sessionStorage.getItem("usuarioLogado"));
-    if (!usuario || Date.now() > usuario.expiraEm) {
-      sessionStorage.removeItem("usuarioLogado");
-      window.location.href = "index.html";
-    }
-  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ANGOCINE - Filmes</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>ANGOCINE - Filmes por Gênero</title>
+
   <style>
-    :root{
-      --bg:#001f3f;
-      --panel:#00264d;
-      --accent:#1e90ff;
-      --accent-hover:#ff8c00;
-      --muted:#cfcfcf;
+    body { margin:0; background:#001f3f; color:#fff; font-family:Arial; }
+    .topo { background:#00264d; padding:15px; text-align:center; font-size:18px; }
+    .lista-filmes {
+      padding:15px; display:flex; flex-wrap:wrap;
+      gap:15px; justify-content:center;
     }
-    *{box-sizing:border-box;}
-    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#fff;padding-bottom:20px;}
-    .top-bar{background:var(--panel);display:flex;align-items:center;justify-content:center;padding:12px 16px;position:relative;}
-    .top-bar .voltar{position:absolute;left:16px;color:#fff;text-decoration:none;font-size:18px;}
-    .top-bar h1{margin:0;font-size:18px;text-align:center;flex:1;}
-    .lista-filmes{padding:12px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
-    .filme-card{background:var(--panel);width:160px;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.5);text-align:center;cursor:pointer;transition: transform .2s ease, box-shadow .2s ease;}
-    .filme-card:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 10px 20px rgba(0,0,0,0.7);}
-    .filme-card img{width:100%;height:220px;object-fit:cover;transition:transform 0.3s ease;}
-    .filme-card:hover img{transform:scale(1.05);}
-    .filme-card p{margin:8px 4px;font-size:14px;}
+    .card {
+      background:#00264d; width:160px; border-radius:12px;
+      overflow:hidden; cursor:pointer; transition:.2s;
+    }
+    .card:hover { transform:scale(1.05); }
+    .card img { width:100%; height:220px; object-fit:cover; }
+    .card p { text-align:center; padding:8px; margin:0; }
   </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
 </head>
 <body>
-  <header class="top-bar">
-    <a href="generos.html" class="voltar">←</a>
-    <h1 id="titulo-genero">Filmes</h1>
-  </header>
 
-  <div class="lista-filmes" id="lista-filmes"></div>
+<div class="topo" id="titulo"></div>
 
-  <script src="catalogo.js"></script>
-  <script>
-    (function(){
-      const params = new URLSearchParams(window.location.search);
-      const genero = params.get('genero');
-      document.getElementById('titulo-genero').textContent = `Filmes: ${genero}`;
+<div class="lista-filmes" id="lista"></div>
 
-      const listaFilmes = document.getElementById('lista-filmes');
-      const todos = [...(catalogo.series||[]), ...(catalogo.filmes||[]), ...(catalogo.animes||[]), ...(catalogo.doramas||[])];
+<script>
+  /* FIREBASE */
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
+    authDomain: "paineladminfilmes.firebaseapp.com",
+    projectId: "paineladminfilmes",
+    storageBucket: "paineladminfilmes.firebasestorage.app",
+    messagingSenderId: "76091758574",
+    appId: "1:76091758574:web:6aca9167578d2a5d2e20ff"
+  };
 
-      const filmesFiltrados = todos.filter(item=>{
-        if(!item.generos) return false;
-        const gArray = Array.isArray(item.generos) ? item.generos : item.generos.split(',').map(x=>x.trim());
-        return gArray.includes(genero);
-      });
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-      if(filmesFiltrados.length===0){
-        listaFilmes.innerHTML = "<p style='color:#fff'>Nenhum título encontrado neste gênero.</p>";
-        return;
-      }
+  const colecoes = ["filmes", "series", "animes", "doramas"];
 
-      filmesFiltrados.forEach(item=>{
-        // Garantir que o tipo está definido
-        if (catalogo.filmes.includes(item)) item.tipo = "filme";
-        if (catalogo.series.includes(item)) item.tipo = "serie";
-        if (catalogo.animes.includes(item)) item.tipo = "anime";
-        if (catalogo.doramas.includes(item)) item.tipo = "dorama";
+  const params = new URLSearchParams(window.location.search);
+  const genero = params.get("genero");
+  document.getElementById("titulo").textContent = "Gênero: " + genero;
 
-        const card = document.createElement('div');
-        card.className='filme-card';
-        card.innerHTML=`<img src="${item.imagem}" alt="${item.titulo}"><p>${item.titulo}</p>`;
+  async function carregarFilmes() {
+    const lista = document.getElementById("lista");
 
-        card.addEventListener('click', ()=>{
-          let pagina = "serie.html";
-          if(item.tipo === "filme") pagina = "filme.html";
-          if(item.tipo === "serie") pagina = "serie.html";
-          if(item.tipo === "anime") pagina = "anime.html";
-          if(item.tipo === "dorama") pagina = "dorama.html";
+    for (let col of colecoes) {
+      const snap = await db.collection(col).get();
+
+      snap.forEach(doc => {
+        const item = doc.data();
+
+        if (!item.genero) return;
+
+        let generosArray = item.genero.split(",").map(g => g.trim());
+
+        if (!generosArray.includes(genero)) return;
+
+        // Descobrir página
+        const pagina =
+          col === "filmes" ? "filme.html" :
+          col === "series" ? "serie.html" :
+          col === "animes" ? "anime.html" :
+          "dorama.html";
+
+        // Criar card
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+          <img src="${item.imagem}">
+          <p>${item.titulo}</p>
+        `;
+
+        card.onclick = () => {
           window.location.href = `${pagina}?slug=${item.slug}`;
-        });
+        };
 
-        listaFilmes.appendChild(card);
+        lista.appendChild(card);
       });
-    })();
-  </script>
+    }
+  }
+
+  carregarFilmes();
+</script>
+
 </body>
 </html>

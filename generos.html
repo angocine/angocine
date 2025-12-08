@@ -1,154 +1,89 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-      <script>
-  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogado"));
-  if (!usuario || Date.now() > usuario.expiraEm) {
-    sessionStorage.removeItem("usuarioLogado");
-    window.location.href = "index.html";
-  }
-</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ANGOCINE - Gêneros</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>ANGOCINE - Catálogo por Gênero</title>
+
   <style>
-    :root{
-      --bg:#001f3f;
-      --panel:#00264d;
-      --accent:#1e90ff;
-      --accent-hover:#ff8c00;
-      --muted:#cfcfcf;
+    body { background:#001f3f; margin:0; color:#fff; font-family:Arial; }
+    h1 { text-align:center; padding:15px; }
+    .lista-generos {
+      display:flex; flex-wrap:wrap; gap:12px;
+      justify-content:center; padding:20px;
     }
-
-    *{box-sizing:border-box;}
-    body {
-      margin:0;
-      font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: #fff;
-      padding-bottom: 0; /* removido espaço da bottom-nav */
+    .genero-card {
+      background:#00264d; padding:18px 25px;
+      border-radius:10px; font-weight:bold;
+      cursor:pointer; transition:.2s;
     }
-
-    .top-bar {
-      background: var(--panel);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:12px 16px;
-      position:relative;
-    }
-    .top-bar .voltar {
-      position:absolute;
-      left:16px;
-      color:#fff;
-      text-decoration:none;
-      font-size:18px;
-    }
-    .top-bar h1 {
-      margin:0;
-      font-size:18px;
-      text-align:center;
-      flex:1;
-    }
-
-    .generos-container {
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      padding:12px;
-      justify-content:center;
-    }
-
-    .genero-btn {
-      width:140px;
-      height:140px;
-      border-radius:14px;
-      font-weight:bold;
-      font-size:14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      color:#fff;
-      cursor:pointer;
-      position:relative;
-      overflow:hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
-      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-
-    .genero-btn::before {
-      content:"";
-      position:absolute;
-      inset:0;
-      background: rgba(0,0,0,0.25);
-      transition: background 0.3s ease;
-    }
-
-    .genero-btn:hover {
-      transform: scale(1.08);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.7);
-    }
-
-    .genero-btn span {
-      position: relative;
-      z-index: 2;
-      text-align:center;
-      padding: 4px 6px;
-    }
-
-    @media(max-width:420px){
-      .genero-btn { width:120px; height:120px; font-size:12px; }
-    }
+    .genero-card:hover { background:#004080; transform:scale(1.05); }
   </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
 </head>
 <body>
-  <header class="top-bar">
-    <a href="home.html" class="voltar">←</a>
-    <h1>Gêneros</h1>
-  </header>
 
-  <div class="generos-container" id="generos-container">
-    <!-- Botões de gêneros vão aparecer aqui -->
-  </div>
+<h1>Catálogo por Gênero</h1>
+<div class="lista-generos" id="lista-generos"></div>
 
-  <script src="catalogo.js"></script>
-  <script>
-    (function(){
-      const generosContainer = document.getElementById('generos-container');
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
+    authDomain: "paineladminfilmes.firebaseapp.com",
+    projectId: "paineladminfilmes",
+    storageBucket: "paineladminfilmes.firebasestorage.app",
+    messagingSenderId: "76091758574",
+    appId: "1:76091758574:web:6aca9167578d2a5d2e20ff"
+  };
 
-      const generosComImagem = [
-        { nome: "Ação", imagem: "accao.jpg" },
-        { nome: "Comédia", imagem: "comediaa.jpg" },
-        { nome: "Romance", imagem: "romancee.jpg" },
-        { nome: "Mistério", imagem: "misteiiro.jpg" },
-        { nome: "Animação", imagem: "animacao.jpg" },
-      ];
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-      generosComImagem.forEach(g => {
-        const btn = document.createElement('div');
-        btn.className = 'genero-btn';
+  const colecoes = ["filmes", "series", "animes", "doramas"];
+  let listaGeneros = new Set();
 
-        const span = document.createElement('span');
-        span.textContent = g.nome;
-        btn.appendChild(span);
+  async function carregarGeneros() {
+    for (let col of colecoes) {
+      const snap = await db.collection(col).get();
 
-        if(g.imagem){
-          btn.style.backgroundImage = `url('${g.imagem}')`;
-          btn.style.backgroundSize = 'cover';
-          btn.style.backgroundPosition = 'center';
-          btn.style.backgroundBlendMode = 'overlay';
-        }
+      snap.forEach(doc => {
+        const item = doc.data();
+        if (!item.genero) return;
 
-        btn.addEventListener('click', ()=>{
-          window.location.href = `filmes-por-genero.html?genero=${encodeURIComponent(g.nome)}`;
-        });
+        // Transformar em array
+        let gens = item.genero.split(",").map(g => g.trim());
 
-        generosContainer.appendChild(btn);
+        gens.forEach(g => listaGeneros.add(g));
       });
-    })();
-  </script>
+    }
+
+    exibirGeneros();
+  }
+
+  function exibirGeneros() {
+    const container = document.getElementById("lista-generos");
+
+    let array = Array.from(listaGeneros).sort();
+
+    array.forEach(g => {
+      const card = document.createElement("div");
+      card.className = "genero-card";
+      card.textContent = g;
+
+      card.onclick = () => {
+        window.location.href = "filmes-por-genero.html?genero=" + encodeURIComponent(g);
+      };
+
+      container.appendChild(card);
+    });
+  }
+
+  carregarGeneros();
+</script>
+
 </body>
 </html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Mensalidades</title>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #eef3f8; padding-bottom: 50px; }
+  header { background: #2a7ef1; color: white; padding: 25px; text-align: center; font-size: 26px; font-weight: bold; }
+  .container { max-width: 900px; margin: 30px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  h2 { color: #2a7ef1; margin-bottom: 15px; }
+  label { font-weight: bold; margin-top: 10px; display: block; }
+  input { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; }
+  button { background: #2a7ef1; color: white; border: none; padding: 12px; margin-top: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 16px; }
+  button:hover { background: #1f5fba; }
+
+  table { width: 100%; margin-top: 20px; border-collapse: collapse; overflow: hidden; border-radius: 10px; }
+  th { background: #2a7ef1; color: white; padding: 12px; text-align: left; }
+  td { padding: 12px; background: #fff; border-bottom: 1px solid #eee; }
+  tr:nth-child(even) td { background: #f7f7f7; }
+  .ativo { font-weight: bold; color: green; }
+  .vencido { font-weight: bold; color: red; }
+
+  @media (max-width: 768px) {
+    table, thead, tbody, th, td, tr { display: block; }
+    tr { margin-bottom: 15px; }
+    th { display: none; }
+    td { display: flex; justify-content: space-between; padding: 10px; }
+    td::before { content: attr(data-label); font-weight: bold; }
+  }
+</style>
+</head>
+
+<body>
+
+<header>Controle de Mensalidades</header>
+
+<div class="container">
+
+  <h2>Adicionar Membro</h2>
+
+  <label>Email:</label>
+  <input type="email" id="email" placeholder="email@exemplo.com">
+
+  <label>Data de Entrada:</label>
+  <input type="date" id="entrada">
+
+  <button id="btnAdicionar">Adicionar Membro</button>
+
+  <h2>Painel de Membros</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Entrada</th>
+        <th>Expiração</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="painelMembros"></tbody>
+  </table>
+</div>
+
+<!-- Supabase v1 (global) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.7"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const supabaseUrl = "https://bzaddtpcwcsociixasrk.supabase.co";
+  const supabaseKey = "sb_publishable_LgGOVNIQoDw8NbKf1AP5Tg_MOLWUd2D";
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  // ➕ Adicionar Membro
+  async function adicionarMembro() {
+    const email = document.getElementById("email").value.trim();
+    const entradaInput = document.getElementById("entrada").value;
+
+    if (!email || !entradaInput) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+
+    const entrada = new Date(entradaInput);
+    const expiracao = new Date(entrada);
+    expiracao.setDate(expiracao.getDate() + 30);
+
+    const { error } = await supabaseClient
+      .from("Membros")
+      .insert([{
+        Email: email,
+        Entrada: entrada.toISOString().split("T")[0],
+        Expiracao: expiracao.toISOString().split("T")[0]
+      }]);
+
+    if (error) {
+      alert("Erro ao salvar: " + error.message);
+      return;
+    }
+
+    listarMembros();
+  }
+
+  // 📋 Listar Membros
+  async function listarMembros() {
+    const { data, error } = await supabaseClient
+      .from("Membros")
+      .select("id, Email, Entrada, Expiracao")
+      .order("id", { ascending: true });
+
+    if (error) {
+      alert("Erro ao carregar membros: " + error.message);
+      return;
+    }
+
+    const tbody = document.getElementById("painelMembros");
+    tbody.innerHTML = "";
+
+    const hoje = new Date();
+
+    data.forEach(membro => {
+      const entrada = new Date(membro.Entrada);
+      const expiracao = new Date(membro.Expiracao);
+
+      const status = expiracao >= hoje ? "Ativo" : "Vencido";
+      const statusClass = status === "Ativo" ? "ativo" : "vencido";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td data-label="Email">${membro.Email}</td>
+        <td data-label="Entrada">${entrada.toLocaleDateString()}</td>
+        <td data-label="Expiração">${expiracao.toLocaleDateString()}</td>
+        <td data-label="Status" class="${statusClass}">${status}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById("btnAdicionar").addEventListener("click", adicionarMembro);
+
+  listarMembros();
+});
+</script>
+
+</body>
+</html>

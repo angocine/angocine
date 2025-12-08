@@ -8,11 +8,18 @@
       window.location.href = "index.html";
     }
   </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resultado da Pesquisa</title>
+
   <link rel="stylesheet" href="style.css">
-  <script src="catalogo.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
   <style>
     .series-container {
       display: flex;
@@ -46,12 +53,14 @@
     }
   </style>
 </head>
+
 <body>
 
 <header class="top-bar">
   <i class="fas fa-bars menu-btn"></i>
   <h1>ANGOCINE</h1>
   <i class="fas fa-search" id="search-icon"></i>
+
   <form id="search-form" action="resultado.html" method="get" style="display:none;">
     <input type="text" name="busca" id="search-input" placeholder="Pesquisar...">
   </form>
@@ -63,9 +72,27 @@
 </section>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+/* ================================================
+   🔥 FIREBASE
+================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
+  authDomain: "paineladminfilmes.firebaseapp.com",
+  projectId: "paineladminfilmes",
+  storageBucket: "paineladminfilmes.firebasestorage.app",
+  messagingSenderId: "76091758574",
+  appId: "1:76091758574:web:6aca9167578d2a5d2e20ff"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ================================================
+   🔎 FUNÇÃO DE BUSCA — AGORA BUSCA NO FIRESTORE
+================================================ */
+document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
-  const termo = params.get("busca")?.toLowerCase();
+  const termo = params.get("busca")?.toLowerCase() || "";
   const container = document.getElementById("resultado-container");
 
   if (!termo) {
@@ -73,14 +100,24 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  const categorias = ["filmes", "series", "animes", "doramas"];
   let resultados = [];
-  for (let categoria in catalogo) {
-    if (Array.isArray(catalogo[categoria])) {
-      resultados = resultados.concat(
-        catalogo[categoria].filter(item => item.titulo.toLowerCase().includes(termo))
-          .map(item => ({ ...item, tipo: categoria }))
-      );
-    }
+
+  for (const cat of categorias) {
+    const snap = await db.collection(cat).get();
+
+    snap.forEach(doc => {
+      const item = doc.data();
+
+      if (item.titulo?.toLowerCase().includes(termo) ||
+          item.genero?.toLowerCase().includes(termo)) {
+        resultados.push({
+          ...item,
+          tipo: cat,
+          id: doc.id
+        });
+      }
+    });
   }
 
   if (resultados.length === 0) {
@@ -101,7 +138,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Função que abre a página correta dependendo do tipo
+/* ================================================
+   📄 ABRIR PÁGINA DE DETALHES
+================================================ */
 function abrirDetalhes(slug, tipo) {
   let pagina = "";
   if (tipo === "series") pagina = "serie.html";
@@ -109,6 +148,7 @@ function abrirDetalhes(slug, tipo) {
   else if (tipo === "animes") pagina = "anime.html";
   else if (tipo === "doramas") pagina = "dorama.html";
   else pagina = "filme.html";
+
   window.location.href = `${pagina}?slug=${slug}`;
 }
 </script>

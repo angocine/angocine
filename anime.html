@@ -26,10 +26,9 @@
       font-family: Arial, sans-serif;
       background: var(--bg-1);
       color: #fff;
-      padding-bottom: 0; /* sem bottom-nav */
+      padding-bottom: 0;
     }
 
-    /* 🔹 Top Bar */
     .top-bar {
       background: var(--panel-2);
       display: flex;
@@ -52,7 +51,6 @@
       flex: 1;
     }
 
-    /* 🔹 Banner */
     .banner {
       width: 100%;
       display: flex;
@@ -79,7 +77,6 @@
       display: block;
     }
 
-    /* 🔹 Painel descritivo */
     .info {
       padding: 12px 16px;
       background: var(--panel);
@@ -91,11 +88,6 @@
       font-size: clamp(20px, 3.2vw, 28px);
       margin: 6px 0;
     }
-    .info .votos {
-      color: gold;
-      margin: 6px 0 8px 0;
-      font-size: 14px;
-    }
     .info p {
       color: var(--muted);
       margin: 0 0 8px 0;
@@ -103,12 +95,11 @@
       font-size: 14px;
     }
 
-    /* 🔹 Gêneros abaixo do texto */
     .generos {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 10px;
+      margin-bottom: 10px;
     }
     .genero {
       padding: 6px 12px;
@@ -122,7 +113,6 @@
     .g3 { background: var(--genre-bg-c); }
     .g4 { background: var(--genre-bg-d); }
 
-    /* 🔹 Temporadas e episódios */
     #temporadas-container { padding: 6px 12px 12px 12px; }
     .temporada {
       background: var(--panel);
@@ -171,7 +161,9 @@
       margin-bottom: 8px;
       transition: background .18s ease, transform .12s ease;
     }
+
     .episodio:hover { background: #004080; transform: translateY(-1px); }
+
     .episodio p {
       margin: 0;
       font-size: 14px;
@@ -179,8 +171,7 @@
       flex: 1;
     }
 
-    .botao {
-      margin-left: 12px;
+    .botao, .botao-acao {
       padding: 6px 10px;
       font-size: 12px;
       background: var(--accent);
@@ -188,119 +179,223 @@
       border-radius: 8px;
       text-decoration: none;
       white-space: nowrap;
+      border: none;
+      cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-      transition: background .18s ease, transform .08s ease;
     }
-    .botao:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .botao:hover, .botao-acao:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    #notificacao {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00c851;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .4s;
+      z-index: 9999;
+    }
+
+    #notificacao.show { opacity: 1; pointer-events: auto; }
 
     @media (max-width:420px){
       .banner .capa { height: 320px; width: 200px; }
       .episodio p { font-size: 13px; }
-      .botao { padding: 6px 8px; font-size: 12px; }
+      .botao, .botao-acao { padding: 6px 8px; font-size: 12px; }
     }
   </style>
-  <script src="sessao.js"></script>
+
+  <!-- Firebase compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-  <!-- 🔹 Top Bar -->
   <header class="top-bar">
-    <a href="home.html" class="voltar" title="Voltar">←</a>
+    <a href="home.html" class="voltar">←</a>
     <h1>ANGOCINE</h1>
   </header>
 
-  <!-- 🔹 Banner -->
   <div class="banner">
     <div class="capa">
       <img id="serie-imagem" src="" alt="Capa do anime">
     </div>
   </div>
 
-  <!-- 🔹 Informações da série -->
   <div class="info">
     <h1 id="serie-titulo">Título</h1>
-    <div class="votos" id="serie-votos" style="display:none;">⭐ 0 votos</div>
     <p id="serie-descricao">Descrição</p>
     <div id="serie-generos" class="generos"></div>
+    <p style="color:var(--muted);margin-top:8px"><strong>Ano:</strong> <span id="serie-ano"></span></p>
   </div>
 
-  <!-- 🔹 Temporadas -->
   <div id="temporadas-container"></div>
+  <div id="notificacao"></div>
 
-  <script src="catalogo.js"></script>
   <script>
-    (function(){
-      const params = new URLSearchParams(window.location.search);
-      const slug = params.get("slug");
-      const todas = [...(catalogo.animes || [])];
-      const item = todas.find(i => i.slug === slug);
-
-      if (!item) {
-        document.getElementById('temporadas-container').innerHTML =
-          "<p style='color:#fff;text-align:center;padding:20px;'>Conteúdo não encontrado.</p>";
-        return;
-      }
-
-      document.getElementById('serie-imagem').src = item.imagem;
-      document.getElementById('serie-titulo').textContent = item.titulo;
-      document.getElementById('serie-descricao').textContent = item.descricao;
-
-      const genBox = document.getElementById('serie-generos');
-      if (item.generos) {
-        const generosArray = Array.isArray(item.generos)
-          ? item.generos
-          : item.generos.split(',').map(g => g.trim());
-        genBox.innerHTML = generosArray
-          .map((g, i) => `<span class="genero g${(i%4)+1}">${g}</span>`)
-          .join('');
-      }
-
-      const container = document.getElementById('temporadas-container');
-      container.innerHTML = "";
-
-      if (!item.temporadas) {
-        container.innerHTML = "<p style='padding:12px;'>Nenhuma temporada disponível.</p>";
-        return;
-      }
-
-      item.temporadas.forEach((temp) => {
-        const bloco = document.createElement('div');
-        bloco.className = 'temporada';
-        const header = document.createElement('div');
-        header.className = 'temporada-header';
-        header.innerHTML = `<h2>${temp.nome}</h2><span class="seta">▼</span>`;
-        const lista = document.createElement('div');
-        lista.className = 'episodios';
-
-        temp.episodios.forEach(ep => {
-          const epDiv = document.createElement('div');
-          epDiv.className = 'episodio';
-          epDiv.innerHTML = `<p>${ep.titulo}</p><a href="${ep.link}" target="_blank" class="botao">Baixar</a>`;
-          lista.appendChild(epDiv);
-        });
-
-        if (item.temporadas.length === 1) {
-          lista.classList.add('ativo');
-          header.querySelector('.seta').classList.add('girar');
+    // Sessão igual ao seu padrão
+    (function verificarSessao() {
+      try {
+        const usuario = JSON.parse(sessionStorage.getItem("usuarioLogado"));
+        if (!usuario || Date.now() > usuario.expiraEm) {
+          sessionStorage.removeItem("usuarioLogado");
+          alert("Sua sessão expirou. Faça login novamente.");
+          window.location.href = "index.html";
         }
-
-        header.addEventListener('click', () => {
-          document.querySelectorAll('.episodios').forEach(e => {
-            if (e !== lista) e.classList.remove('ativo');
-          });
-          document.querySelectorAll('.seta').forEach(s => {
-            if (s !== header.querySelector('.seta')) s.classList.remove('girar');
-          });
-          lista.classList.toggle('ativo');
-          header.querySelector('.seta').classList.toggle('girar');
-        });
-
-        bloco.appendChild(header);
-        bloco.appendChild(lista);
-        container.appendChild(bloco);
-      });
+      } catch (e) {
+        sessionStorage.removeItem("usuarioLogado");
+        window.location.href = "index.html";
+      }
     })();
   </script>
 
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
+      authDomain: "paineladminfilmes.firebaseapp.com",
+      projectId: "paineladminfilmes",
+      storageBucket: "paineladminfilmes.firebasestorage.app",
+      messagingSenderId: "76091758574",
+      appId: "1:76091758574:web:6aca9167578d2a5d2e20ff",
+      measurementId: "G-00ZFT2DCY0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function mostrarNotificacao(msg, tempo = 2500) {
+      const n = document.getElementById('notificacao');
+      n.innerText = msg;
+      n.classList.add('show');
+      setTimeout(() => n.classList.remove('show'), tempo);
+    }
+
+    function copiarLinkMega(link) {
+      if (!link) { mostrarNotificacao("Link indisponível"); return; }
+      navigator.clipboard.writeText(link).then(() => {
+        mostrarNotificacao("📋 Link copiado! Abra o 1DM e cole.");
+      }).catch(() => mostrarNotificacao("Erro ao copiar"));
+    }
+
+    (async function carregarAnime() {
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get("slug");
+      if (!slug) {
+        document.getElementById('temporadas-container').innerHTML =
+          "<p style='color:#fff;text-align:center;padding:20px;'>Slug não informado.</p>";
+        return;
+      }
+
+      try {
+
+        const snapshot = await db.collection('animes').where('slug', '==', slug).get();
+
+        if (snapshot.empty) {
+          document.getElementById('temporadas-container').innerHTML =
+            "<p style='color:#fff;text-align:center;padding:20px;'>Anime não encontrado.</p>";
+          return;
+        }
+
+        const item = snapshot.docs[0].data();
+
+        document.getElementById('serie-imagem').src = item.imagem || '';
+        document.getElementById('serie-titulo').textContent = item.titulo || 'Sem título';
+        document.getElementById('serie-descricao').textContent = item.descricao || '';
+        document.getElementById('serie-ano').textContent = item.ano || '';
+
+        const genBox = document.getElementById('serie-generos');
+        genBox.innerHTML = '';
+        const generoRaw = item.generos || item.genero || '';
+        let genArr = [];
+        if (Array.isArray(generoRaw)) genArr = generoRaw;
+        else if (typeof generoRaw === 'string') genArr = generoRaw.split(',').map(g => g.trim()).filter(Boolean);
+
+        genBox.innerHTML = genArr.map((g,i) => `<span class="genero g${(i%4)+1}">${g}</span>`).join('');
+
+        const container = document.getElementById('temporadas-container');
+        container.innerHTML = '';
+
+        if (Array.isArray(item.temporadas) && item.temporadas.length > 0) {
+          item.temporadas.forEach((temp) => {
+            const bloco = document.createElement('div');
+            bloco.className = 'temporada';
+
+            const header = document.createElement('div');
+            header.className = 'temporada-header';
+
+            const numeroTemp = temp.numero !== undefined ? temp.numero : '';
+            const nomeTemp = numeroTemp ? `${numeroTemp}ª Temporada` : 'Temporada';
+
+            header.innerHTML = `<h2>${nomeTemp}</h2><span class="seta">▼</span>`;
+
+            const lista = document.createElement('div');
+            lista.className = 'episodios';
+
+            if (Array.isArray(temp.episodios) && temp.episodios.length > 0) {
+              temp.episodios.forEach(ep => {
+                const epDiv = document.createElement('div');
+                epDiv.className = 'episodio';
+
+                const numeroEp = ep.numero !== undefined ? ep.numero : '';
+                const linkEp = ep.link || '';
+
+                epDiv.innerHTML = `
+                  <p>${numeroEp ? numeroEp + 'º — Episódio' : 'Episódio'}</p>
+                  <div style="display:flex;gap:8px">
+                    <a href="${linkEp || '#'}" target="_blank" class="botao">${linkEp ? 'Abrir no MEGA' : 'Sem link'}</a>
+                    <button class="botao-acao" ${linkEp ? '' : 'disabled'}>Copiar link</button>
+                  </div>
+                `;
+
+                epDiv.querySelector('.botao-acao')
+                  .addEventListener('click', () => copiarLinkMega(linkEp));
+
+                lista.appendChild(epDiv);
+              });
+
+            } else {
+              const p = document.createElement('p');
+              p.style.color = 'var(--muted)';
+              p.style.padding = '8px';
+              p.textContent = 'Nenhum episódio disponível nesta temporada.';
+              lista.appendChild(p);
+            }
+
+            if (item.temporadas.length === 1) {
+              lista.classList.add('ativo');
+              header.querySelector('.seta').classList.add('girar');
+            }
+
+            header.addEventListener('click', () => {
+              document.querySelectorAll('.episodios').forEach(e => { if (e !== lista) e.classList.remove('ativo'); });
+              document.querySelectorAll('.temporada-header .seta').forEach(s => { if (s !== header.querySelector('.seta')) s.classList.remove('girar'); });
+              lista.classList.toggle('ativo');
+              header.querySelector('.seta').classList.toggle('girar');
+            });
+
+            bloco.appendChild(header);
+            bloco.appendChild(lista);
+            container.appendChild(bloco);
+          });
+
+        } else {
+          container.innerHTML = `<p style="color:#fff;padding:12px;">Nenhuma temporada/episódio disponível.</p>`;
+        }
+
+      } catch (err) {
+        console.error("Erro ao carregar anime:", err);
+        document.getElementById('temporadas-container').innerHTML =
+          "<p style='color:#fff;text-align:center;padding:20px;'>Erro ao carregar. Veja console.</p>";
+      }
+    })();
+  </script>
 </body>
 </html>

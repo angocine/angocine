@@ -6,18 +6,22 @@
   <title>ANGOCINE - Streaming</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="catalogo.js" defer></script>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <!-- 🔥 SISTEMA DE SESSÃO -->
   <script>
     const usuario = JSON.parse(sessionStorage.getItem("usuarioLogado"));
     if (!usuario || Date.now() > usuario.expiraEm) {
       sessionStorage.removeItem("usuarioLogado");
+      alert("Sua sessão expirou. Faça login novamente.");
       window.location.href = "index.html";
     }
   </script>
 
   <style>
-    /* 🔹 Sidebar ADM */
     .sidebar {
       position: fixed;
       top: 0;
@@ -30,14 +34,11 @@
       padding: 20px;
       z-index: 1000;
       overflow-y: auto;
+      text-align: center;
     }
+    .sidebar.active { left: 0; }
 
-    .sidebar.active {
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .sidebar .close-btn {
+    .close-btn {
       font-size: 24px;
       cursor: pointer;
       position: absolute;
@@ -50,7 +51,7 @@
       height: 120px;
       border-radius: 50%;
       overflow: hidden;
-      margin: 20px auto;
+      margin: 20px auto 10px;
       border: 3px solid #fff;
     }
 
@@ -58,92 +59,177 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
     }
 
-    .sidebar h2 {
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .sidebar textarea {
-      width: 100%;
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      resize: none;
-    }
-
-    #send-request {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #1e90ff;
-      color: #fff;
-      cursor: pointer;
+    .admin-name {
+      font-size: 22px;
       font-weight: bold;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-entrar {
+      background: #ffcc00;
+      color: #000;
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 25px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .nota-box {
+      background: #003366;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    .nota-box h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: #ffcc00;
+    }
+
+    .nota-box p {
+      font-size: 14px;
+      line-height: 1.4;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- 🔹 Topo -->
-  <header class="top-bar">
-    <i class="fas fa-bars menu-btn" id="menu-btn"></i>
-    <h1>ANGOCINE</h1>
-    <i class="fas fa-search" id="search-icon"></i>
-    <form id="search-form" action="resultado.html" method="get" style="display:none;">
-      <input type="text" name="busca" id="search-input" placeholder="Pesquisar...">
-    </form>
-  </header>
+<header class="top-bar">
+  <i class="fas fa-bars menu-btn" id="menu-btn"></i>
+  <h1>ANGOCINE</h1>
+  <i class="fas fa-search" id="search-icon"></i>
 
-  <!-- 🔹 Banner -->
-  <section class="banner" id="banner-container">
-    <div class="banner-slides" id="banner-slides"></div>
-  </section>
+  <form id="search-form" action="resultado.html" method="get" style="display:none;">
+    <input type="text" name="busca" id="search-input" placeholder="Pesquisar...">
+  </form>
+</header>
 
-  <!-- 🔹 Conteúdo principal -->
-  <main id="conteudo-principal"></main>
+<section class="banner" id="banner-container">
+  <div class="banner-slides" id="banner-slides"></div>
+</section>
 
-  <!-- 🔹 Menu inferior -->
-  <nav class="bottom-nav">
-    <a href="#" data-tipo="inicio" class="ativo"><i class="fas fa-home"></i><span>INÍCIO</span></a>
-    <a href="#" data-tipo="filmes"><i class="fas fa-film"></i><span>FILMES</span></a>
-    <a href="#" data-tipo="series"><i class="fas fa-tv"></i><span>SÉRIES</span></a>
-    <a href="#" data-tipo="animes"><i class="fas fa-dragon"></i><span>ANIMES</span></a>
-    <a href="#" data-tipo="doramas"><i class="fas fa-heart"></i><span>DORAMAS</span></a>
-    <a href="#" data-tipo="catalogo"><i class="fas fa-book-open"></i><span>CATÁLOGO</span></a>
-    <a href="#" data-tipo="pagamento"><i class="fas fa-credit-card"></i><span>PAGAMENTO</span></a>
-  </nav>
+<main id="conteudo-principal"></main>
 
-  <!-- 🔹 Sidebar ADM -->
-  <div id="admin-sidebar" class="sidebar">
-    <div class="sidebar-content">
-      <span class="close-btn" id="close-sidebar">&times;</span>
-      <div class="admin-circle">
-        <img src="Screenshot_20251110-144413.jpg" alt="Administrador" class="admin-photo">
-      </div>
-      <h2>Formiga spy</h2>
-      <p>Faça seu pedido abaixo:</p>
-      <textarea placeholder="Digite seu pedido aqui"></textarea>
-      <button id="send-request">Enviar Pedido</button>
-    </div>
+<nav class="bottom-nav">
+  <a href="#" data-tipo="inicio" class="ativo"><i class="fas fa-home"></i><span>INÍCIO</span></a>
+  <a href="#" data-tipo="filmes"><i class="fas fa-film"></i><span>FILMES</span></a>
+  <a href="#" data-tipo="series"><i class="fas fa-tv"></i><span>SÉRIES</span></a>
+  <a href="#" data-tipo="animes"><i class="fas fa-dragon"></i><span>ANIMES</span></a>
+  <a href="#" data-tipo="doramas"><i class="fas fa-heart"></i><span>DORAMAS</span></a>
+  <a href="#" data-tipo="catalogo"><i class="fas fa-book-open"></i><span>CATÁLOGO</span></a>
+  <a href="#" data-tipo="pagamento"><i class="fas fa-credit-card"></i><span>PAGAMENTO</span></a>
+</nav>
+
+<!-- Sidebar ADM -->
+<div id="admin-sidebar" class="sidebar">
+  <span class="close-btn" id="close-sidebar">&times;</span>
+
+  <div class="admin-circle">
+    <img src="Screenshot_20251110-144413.jpg" alt="Administrador">
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const bannerSlides = document.getElementById("banner-slides");
-      const conteudo = document.getElementById("conteudo-principal");
-      const botoes = document.querySelectorAll(".bottom-nav a");
+  <div class="admin-name">Formiga Spy</div>
 
-      // 🔹 Banner
-      const filmesBanner = catalogo.filmes.slice(0, 2).map(item => ({...item, tipo: 'filme'}));
-      const seriesBanner = catalogo.series.slice(0, 3).map(item => ({...item, tipo: 'serie'}));
-      const bannerItens = [...filmesBanner, ...seriesBanner];
+  <a href="login-adm.html" class="btn-entrar">ENTRAR</a>
+
+  <div class="nota-box">
+    <h3>Nota Informativa</h3>
+    <p>
+      Este painel é exclusivo para administradores autorizados.  
+      Mantenha as suas credenciais em sigilo e evite acessos indevidos.
+    </p>
+  </div>
+</div>
+
+<script>
+  /* ==== FIREBASE ==== */
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
+    authDomain: "paineladminfilmes.firebaseapp.com",
+    projectId: "paineladminfilmes",
+    storageBucket: "paineladminfilmes.firebasestorage.app",
+    messagingSenderId: "76091758574",
+    appId: "1:76091758574:web:6aca9167578d2a5d2e20ff",
+    measurementId: "G-00ZFT2DCY0"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const bannerSlides = document.getElementById("banner-slides");
+    const conteudo = document.getElementById("conteudo-principal");
+    const botoes = document.querySelectorAll(".bottom-nav a");
+
+    const catalogo = { filmes: [], series: [], animes: [], doramas: [] };
+
+    /* === Carregar coleções do mais recente → mais antigo === */
+    ["filmes", "series", "animes", "doramas"].forEach(cat => {
+      db.collection(cat)
+        .orderBy("criadoEm", "desc") // ← ORDEM CORRETA
+        .onSnapshot(snapshot => {
+          catalogo[cat] = [];
+          snapshot.forEach(doc => {
+            let item = doc.data();
+            item.id = doc.id;
+            item.tipo =
+              cat === "filmes" ? "filme" :
+              cat === "series" ? "serie" :
+              cat === "animes" ? "anime" : "dorama";
+
+            catalogo[cat].push(item);
+          });
+
+          mostrarInicio();
+        });
+    });
+
+    function gerarCategoria(titulo, categoria) {
+      if (!catalogo[categoria] || catalogo[categoria].length === 0) return;
+      const section = document.createElement("section");
+      section.className = "section";
+      section.innerHTML = `
+        <div class="section-header"><h3>${titulo}</h3></div>
+        <div class="series-container">
+          ${catalogo[categoria].map(item => `
+            <div class="card ${categoria}">
+              <span class="etiqueta">${categoria.toUpperCase()}</span>
+              <a href="${item.tipo}.html?slug=${item.slug}" class="card-link">
+                <img src="${item.imagem}" alt="${item.titulo}">
+                <p>${item.titulo}</p>
+                <p class="card-stars">${item.nota || '★★★★☆'}</p>
+              </a>
+            </div>
+          `).join("")}
+        </div>
+      `;
+      conteudo.appendChild(section);
+    }
+
+    function mostrarInicio() {
+      conteudo.innerHTML = "";
+      gerarCategoria("Filmes", "filmes");
+      gerarCategoria("Séries", "series");
+      gerarCategoria("Animes", "animes");
+      gerarCategoria("Doramas", "doramas");
+
+      bannerSlides.innerHTML = "";
+
+      /* === Banner com itens MAIS RECENTES === */
+      const bannerItens = [
+        ...catalogo.filmes.slice(0, 2), // 2 filmes mais novos
+        ...catalogo.series.slice(0, 3)  // 3 séries mais novas
+      ];
 
       bannerItens.forEach(item => {
         const div = document.createElement("div");
@@ -151,10 +237,10 @@
         div.innerHTML = `
           <a href="${item.tipo}.html?slug=${item.slug}">
             <div class="banner-bg" style="background-image: url('${item.imagem}')"></div>
-            <img class="banner-img" src="${item.imagem}" alt="${item.titulo}">
+            <img class="banner-img" src="${item.imagem}">
             <div class="banner-info">
               <div class="banner-title">${item.titulo}</div>
-              <p><span class="banner-stars">${item.nota || '★★★★☆'}</span> 99 votos</p>
+              <p><span class="banner-stars">${item.nota || '★★★★☆'}</span></p>
             </div>
           </a>
         `;
@@ -162,80 +248,41 @@
       });
 
       let index = 0;
-      function mudarSlide() {
+      setInterval(() => {
+        if (bannerItens.length === 0) return;
         index = (index + 1) % bannerItens.length;
         bannerSlides.style.transform = `translateX(-${index * 100}%)`;
-      }
-      setInterval(mudarSlide, 5000);
+      }, 5000);
+    }
 
-      function gerarCategoria(titulo, categoria, tipo) {
-        if (!catalogo[categoria]) return;
-        const section = document.createElement("section");
-        section.className = "section";
-        section.innerHTML = `
-          <div class="section-header"><h3>${titulo}</h3></div>
-          <div class="series-container">
-            ${catalogo[categoria].map(item => `
-              <div class="card ${categoria}">
-                <span class="etiqueta">${categoria.toUpperCase()}</span>
-                <a href="${tipo}.html?slug=${item.slug}" class="card-link">
-                  <img src="${item.imagem}" alt="${item.titulo}">
-                  <p>${item.titulo}</p>
-                  <p class="card-stars">${item.nota || '★★★★☆'}</p>
-                </a>
-              </div>
-            `).join('')}
-          </div>
-        `;
-        conteudo.appendChild(section);
-      }
-
-      function mostrarInicio() {
+    botoes.forEach(botao => {
+      botao.addEventListener("click", e => {
+        const tipo = botao.getAttribute("data-tipo");
+        if (tipo === "pagamento") return window.location.href = "pagamento.html";
+        if (tipo === "catalogo") return window.location.href = "generos.html";
+        e.preventDefault();
+        botoes.forEach(b => b.classList.remove("ativo"));
+        botao.classList.add("ativo");
+        if (tipo === "inicio") return mostrarInicio();
         conteudo.innerHTML = "";
-        gerarCategoria("SÉRIES", "series", "serie");
-        gerarCategoria("FILMES", "filmes", "filme");
-        gerarCategoria("ANIMES", "animes", "anime");
-        gerarCategoria("DORAMAS", "doramas", "dorama");
-      }
-
-      botoes.forEach(botao => {
-        botao.addEventListener("click", e => {
-          const tipo = botao.getAttribute("data-tipo");
-          if (tipo === "pagamento") return window.location.href = "pagamento.html";
-          if (tipo === "catalogo") return window.location.href = "generos.html"; // ✅ abre generos.html
-
-          e.preventDefault();
-          botoes.forEach(b => b.classList.remove("ativo"));
-          botao.classList.add("ativo");
-          tipo === "inicio"
-            ? mostrarInicio()
-            : (conteudo.innerHTML = "", gerarCategoria(tipo.toUpperCase(), tipo, tipo.slice(0, -1)));
-        });
-      });
-
-      mostrarInicio();
-
-      // 🔹 Menu hambúrguer ADM
-      const menuBtn = document.getElementById("menu-btn");
-      const sidebar = document.getElementById("admin-sidebar");
-      const closeSidebar = document.getElementById("close-sidebar");
-
-      menuBtn.addEventListener("click", () => {
-        sidebar.classList.toggle("active");
-      });
-
-      closeSidebar.addEventListener("click", () => {
-        sidebar.classList.remove("active");
-      });
-
-      // 🔹 Pesquisa
-      const searchIcon = document.getElementById("search-icon");
-      const searchForm = document.getElementById("search-form");
-      searchIcon.addEventListener("click", () => {
-        searchForm.style.display = (searchForm.style.display === "block") ? "none" : "block";
+        gerarCategoria(tipo.toUpperCase(), tipo);
       });
     });
-  </script>
+
+    document.getElementById("menu-btn").addEventListener("click", () =>
+      document.getElementById("admin-sidebar").classList.add("active")
+    );
+
+    document.getElementById("close-sidebar").addEventListener("click", () =>
+      document.getElementById("admin-sidebar").classList.remove("active")
+    );
+
+    document.getElementById("search-icon").addEventListener("click", () => {
+      const form = document.getElementById("search-form");
+      form.style.display = form.style.display === "block" ? "none" : "block";
+    });
+  });
+</script>
 
 </body>
 </html>

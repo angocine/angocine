@@ -31,7 +31,6 @@
       padding-bottom: 80px;
     }
 
-    /* Topo */
     .top-bar {
       background: var(--panel-2);
       display: flex;
@@ -53,7 +52,6 @@
       text-align: center;
     }
 
-    /* Banner */
     .banner {
       width: 100%;
       display: flex;
@@ -78,7 +76,6 @@
       object-fit: cover;
     }
 
-    /* CAIXA DA DESCRIÇÃO */
     .descricao-caixa {
       background: var(--card-bg);
       margin: 20px 16px 10px;
@@ -101,7 +98,6 @@
       text-align: left;
     }
 
-    /* GÉNEROS */
     .generos {
       display: flex;
       flex-wrap: wrap;
@@ -122,64 +118,57 @@
     .g3 { background: var(--genre-bg-c); }
     .g4 { background: var(--genre-bg-d); }
 
-    /* Botão Baixar */
-    .botao-centro {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    .botao-centro a {
-      background: var(--accent);
-      color: #fff;
-      padding: 12px 28px;
-      border-radius: 10px;
-      font-size: 16px;
-      text-decoration: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      transition: background .2s ease, transform .1s ease;
-    }
-    .botao-centro a:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-    }
-
-    /* Rodapé */
-    .bottom-nav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 60px;
-      background: var(--panel-2);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      z-index: 999;
-    }
-    .bottom-nav a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 12px;
+    .download-box {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 4px;
+      gap: 12px;
+      margin: 25px 20px;
     }
-    .bottom-nav a i { font-size: 18px; }
+
+    .download-btn {
+      background: var(--accent);
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 16px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .2s ease;
+    }
+    .download-btn:hover {
+      background: var(--accent-hover);
+    }
 
     @media (max-width:420px) {
       .banner .capa { height: 320px; width: 200px; }
     }
   </style>
 
-  <script src="sessao.js"></script>
+  <!-- Firebase v9 compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
+      authDomain: "paineladminfilmes.firebaseapp.com",
+      projectId: "paineladminfilmes",
+      storageBucket: "paineladminfilmes.firebasestorage.app",
+      messagingSenderId: "76091758574",
+      appId: "1:76091758574:web:6aca9167578d2a5d2e20ff",
+      measurementId: "G-00ZFT2DCY0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
 </head>
+
 <body>
 
   <header class="top-bar">
-    <a href="home.html" class="voltar" title="Voltar">←</a>
+    <a href="home.html" class="voltar">←</a>
     <h1>ANGOCINE</h1>
   </header>
 
@@ -190,49 +179,74 @@
   </div>
 
   <div class="descricao-caixa">
-    <h2 id="filme-titulo">Título do Filme</h2>
+    <h2 id="filme-titulo">Carregando...</h2>
     <p id="filme-descricao">Carregando descrição...</p>
     <div id="filme-generos" class="generos"></div>
   </div>
 
-  <div class="botao-centro">
-    <a id="filme-botao" href="#" target="_blank">Baixar</a>
+  <div class="download-box">
+    <div id="copiar" class="download-btn">📋 Copiar link (1DM / ADM)</div>
+    <a id="abrirMega" class="download-btn" href="#" target="_blank">🌐 Abrir no MEGA</a>
   </div>
 
-  
-  <script src="catalogo.js"></script>
-
   <script>
-    (function () {
+    function getSlugFromURL(){
       const params = new URLSearchParams(window.location.search);
-      const slug = params.get("slug");
-      const filmes = catalogo.filmes || [];
-      const filme = filmes.find(f => f.slug === slug);
+      return params.get("slug");
+    }
 
-      if (!filme) {
-        document.querySelector(".descricao-caixa").innerHTML =
-          "<p style='color:#fff;text-align:center;padding:20px;'>Filme não encontrado.</p>";
-        document.querySelector(".botao-centro").style.display = "none";
+    async function carregarFilme(){
+      const slug = getSlugFromURL();
+      if(!slug){
+        alert("Slug não informado.");
         return;
       }
 
-      document.getElementById("filme-imagem").src = filme.imagem;
-      document.getElementById("filme-titulo").textContent = filme.titulo;
-      document.getElementById("filme-descricao").textContent = filme.descricao;
-      document.getElementById("filme-botao").href = filme.link;
+      try {
+        const snap = await db.collection("filmes").get();
 
-      // Mostrar gêneros garantindo que seja array
-      const genBox = document.getElementById("filme-generos");
-      if (filme.generos) {
-        const generosArray = Array.isArray(filme.generos)
-          ? filme.generos
-          : filme.generos.split(",").map(g => g.trim());
+        let filme = null;
+        snap.forEach(doc => {
+          const data = doc.data();
+          if(data.slug === slug){
+            filme = data;
+          }
+        });
 
-        genBox.innerHTML = generosArray
-          .map((g, i) => `<span class="genero g${(i % 4) + 1}">${g}</span>`)
-          .join("");
+        if(!filme){
+          document.querySelector(".descricao-caixa").innerHTML =
+            "<h3 style='text-align:center;color:#fff;'>Filme não encontrado</h3>";
+          return;
+        }
+
+        document.getElementById("filme-imagem").src = filme.imagem || "";
+        document.getElementById("filme-titulo").textContent = filme.titulo || "Sem título";
+        document.getElementById("filme-descricao").textContent = filme.descricao || "";
+        document.getElementById("abrirMega").href = filme.link || "#";
+
+        document.getElementById("copiar").onclick = () => {
+          if(!filme.link) return alert("Nenhum link disponível.");
+          navigator.clipboard.writeText(filme.link);
+          alert("✔ Link copiado!");
+        };
+
+        const genBox = document.getElementById("filme-generos");
+        genBox.innerHTML = "";
+
+        if(filme.genero){
+          const generosArray = filme.genero.split(",").map(g => g.trim());
+          genBox.innerHTML = generosArray
+            .map((g, i) => `<span class="genero g${(i%4)+1}">${g}</span>`)
+            .join("");
+        }
+
+      } catch (err){
+        console.error(err);
+        alert("Erro ao carregar filme.");
       }
-    })();
+    }
+
+    carregarFilme();
   </script>
 
 </body>

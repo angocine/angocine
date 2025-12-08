@@ -196,6 +196,20 @@
     min-height: 18px;
   }
 
+  /* LINK ADM */
+  .adm-link {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #ffcc00;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .adm-link:hover {
+    color: #fff;
+  }
+
   /* RESPONSIVO */
   @media (max-width: 400px) {
     h1 { font-size: 1.6em; }
@@ -228,6 +242,9 @@
 
     <button onclick="login()">Entrar</button>
     <div class="mensagem" id="mensagem"></div>
+
+    <!-- LINK ADMIN -->
+    <a href="login-adm.html" class="adm-link">_</a>
   </div>
 
   <script type="module">

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANGOCINE - Painel ADM</title>
+<style>
+  :root{
+    --bg:#001f3f;
+    --panel:#0a2b4d;
+    --panel-2:#0f3a6f;
+    --accent:#ffcc00;
+    --accent-2:#ff9900;
+    --muted:#cbd5e1;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; font-family:Arial,sans-serif; background:var(--bg); color:white;}
+  header{background:#003366; padding:18px; text-align:center; font-size:22px; font-weight:bold;}
+  .menu{display:flex; justify-content:center; gap:15px; padding:15px; background:#00264d;}
+  .menu a{background:#004080; padding:10px 20px; color:white; text-decoration:none; border-radius:8px; font-weight:bold; transition:.2s;}
+  .menu a:hover{background:#0059b3;}
+  .container{padding:20px; display:none;}
+  h2{margin-bottom:15px;}
+  input, textarea{padding:10px; width:95%; max-width:500px; border-radius:8px; border:none; margin-bottom:10px; color:#000;}
+  table{width:100%; border-collapse:collapse; margin-top:10px;}
+  table th, table td{padding:12px; border-bottom:1px solid #004d80; color:white;}
+  button{padding:6px 15px; border:none; border-radius:5px; cursor:pointer; font-weight:bold;}
+  .edit-btn{background:#ffaa00;}
+  .del-btn{background:#ff4444; color:white;}
+  /* Modal */
+  #modal{
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center;
+    padding:10px; box-sizing:border-box; overflow-y:auto;
+  }
+  .modal-box{
+    background:#00264d; padding:20px; width:100%; max-width:500px;
+    border-radius:12px; color:white; box-sizing:border-box;
+  }
+  .modal-box input, .modal-box textarea{width:100%; padding:10px; border-radius:8px; border:none; margin-bottom:10px; color:#000;}
+  /* Temporadas e episódios */
+  .temporadas-wrap{display:flex; flex-direction:column; gap:12px; margin-top:6px;}
+  .temporada{background:#0f3a6f; padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:8px;}
+  .temporada-header{font-weight:700; color:var(--accent); display:flex; justify-content:space-between; align-items:center;}
+  .episodios{display:flex; flex-direction:column; gap:8px; margin-top:6px;}
+  .episodio{display:flex; gap:8px; align-items:center;}
+  .ep-label{min-width:110px; font-weight:600; color:var(--muted);}
+  .ep-input{flex:1;}
+  /* Responsivo */
+  @media(max-width:600px){
+    .menu{flex-direction:column; gap:10px;}
+    .modal-box{padding:15px;}
+    input, textarea{font-size:14px;}
+  }
+</style>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+</head>
+<body>
+
+<header>ANGOCINE - Painel do Administrador</header>
+
+<div class="menu">
+  <a href="adm.html">Adicionar Conteúdo</a>
+  <a href="#" onclick="abrirGerenciador()">Gerenciar Conteúdo</a>
+  <a href="usuario.html">Adicionar Usuário</a>
+   <a href="home.html">Home</a>
+</div>
+
+<div id="gerenciar" class="container">
+  <h2>Gerenciar Conteúdo</h2>
+  <input id="buscar" placeholder="Pesquisar por título..." oninput="filtrar()">
+  <table>
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Tipo</th>
+        <th>Cliques</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="lista"></tbody>
+  </table>
+</div>
+
+<div id="modal">
+  <div class="modal-box">
+    <h3>Editar Conteúdo</h3>
+    <input id="editTitulo" placeholder="Título">
+    <input id="editAno" type="number" placeholder="Ano">
+    <input id="editGenero" placeholder="Gênero (ex: ação, drama)">
+    <input id="editImagem" placeholder="URL da Imagem">
+    <textarea id="editDescricao" placeholder="Descrição"></textarea>
+    <input id="editLink" placeholder="Link do Filme (só filmes)">
+    <div class="temporadas-wrap" id="editTemporadasContainer"></div>
+    <button onclick="salvarEdicao()" style="background:#00cc44;color:white;width:100%;margin-top:10px;">Salvar</button>
+  </div>
+</div>
+
+<script>
+  // Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
+    authDomain: "paineladminfilmes.firebaseapp.com",
+    projectId: "paineladminfilmes",
+    storageBucket: "paineladminfilmes.firebasestorage.app",
+    messagingSenderId: "76091758574",
+    appId: "1:76091758574:web:6aca9167578d2a5d2e20ff"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const colecoes = ["filmes", "series", "animes", "doramas"];
+  let dados = [];
+  let editando = null;
+
+  async function abrirGerenciador() {
+    document.getElementById("gerenciar").style.display = "block";
+    carregar();
+  }
+
+  async function carregar() {
+    dados = [];
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "<tr><td colspan='4'>Carregando...</td></tr>";
+
+    for (let col of colecoes) {
+      const snap = await db.collection(col).get();
+      snap.forEach(doc => {
+        dados.push({
+          id: doc.id,
+          tipo: col,
+          clics: doc.data().clics || 0,
+          ...doc.data()
+        });
+      });
+    }
+
+    exibir(dados);
+  }
+
+  function exibir(arr) {
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "";
+
+    arr.forEach(item => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${item.titulo}</td>
+        <td>${item.tipo}</td>
+        <td>${item.clics || 0}</td>
+        <td>
+          <button class="edit-btn" onclick="editar('${item.id}','${item.tipo}')">Editar</button>
+          <button class="del-btn" onclick="apagar('${item.id}','${item.tipo}')">Apagar</button>
+        </td>
+      `;
+      lista.appendChild(tr);
+    });
+  }
+
+  function filtrar() {
+    let txt = document.getElementById("buscar").value.toLowerCase();
+    let filtrado = dados.filter(d => d.titulo.toLowerCase().includes(txt));
+    exibir(filtrado);
+  }
+
+  async function apagar(id, tipo) {
+    if (!confirm("Tem certeza que deseja apagar?")) return;
+    await db.collection(tipo).doc(id).delete();
+    carregar();
+  }
+
+  function editar(id, tipo) {
+    editando = { id, tipo };
+    const item = dados.find(x => x.id === id && x.tipo === tipo);
+
+    document.getElementById("editTitulo").value = item.titulo;
+    document.getElementById("editAno").value = item.ano || '';
+    document.getElementById("editGenero").value = item.genero || '';
+    document.getElementById("editImagem").value = item.imagem || '';
+    document.getElementById("editDescricao").value = item.descricao || '';
+    document.getElementById("editLink").value = item.link || '';
+
+    const tempContainer = document.getElementById("editTemporadasContainer");
+    tempContainer.innerHTML = '';
+    if(item.temporadas){
+      item.temporadas.forEach(t => {
+        const tempDiv = document.createElement('div');
+        tempDiv.className = 'temporada';
+        tempDiv.innerHTML = `<div class="temporada-header">Temporada ${t.numero}</div><div class="episodios"></div>`;
+        const epsWrap = tempDiv.querySelector('.episodios');
+        t.episodios.forEach(e => {
+          const epDiv = document.createElement('div');
+          epDiv.className = 'episodio';
+          epDiv.innerHTML = `<div class="ep-label">Episódio ${e.numero}</div>
+                             <input class="ep-input" type="text" value="${e.link}" />`;
+          epsWrap.appendChild(epDiv);
+        });
+        tempContainer.appendChild(tempDiv);
+      });
+    }
+
+    document.getElementById("modal").style.display = "flex";
+  }
+
+  async function salvarEdicao() {
+    const obj = {
+      titulo: document.getElementById("editTitulo").value,
+      ano: Number(document.getElementById("editAno").value) || null,
+      genero: document.getElementById("editGenero").value,
+      imagem: document.getElementById("editImagem").value,
+      descricao: document.getElementById("editDescricao").value,
+      link: document.getElementById("editLink").value,
+    };
+
+    // temporadas
+    const tempContainer = document.getElementById("editTemporadasContainer");
+    const tempNodes = Array.from(tempContainer.querySelectorAll('.temporada'));
+    const temporadas = tempNodes.map((tNode, tIdx) => {
+      const epNodes = Array.from(tNode.querySelectorAll('.episodio'));
+      const episodios = epNodes.map((epNode, eIdx) => {
+        const linkInput = epNode.querySelector('.ep-input');
+        return {
+          numero: eIdx + 1,
+          link: linkInput ? linkInput.value.trim() : ''
+        };
+      }).filter(ep => ep.link);
+      return { numero: tIdx + 1, episodios };
+    }).filter(t => t.episodios.length > 0);
+
+    if(temporadas.length > 0) obj.temporadas = temporadas;
+
+    // salvar no Firebase
+    await db.collection(editando.tipo).doc(editando.id).update(obj);
+    document.getElementById("modal").style.display = "none";
+    carregar();
+  }
+</script>
+
+</body>
+</html>

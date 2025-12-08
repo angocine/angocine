@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adicionar Novo Usuário - Painel</title>
+<style>
+  body { font-family: Arial, sans-serif; background-color: #001f3f; color: white; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+  .container { background-color: #0a2b4d; padding:30px; border-radius:12px; width:90%; max-width:400px; box-sizing:border-box; }
+  h2 { text-align:center; margin-bottom:20px; color:#ffcc00; }
+  input { width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:none; font-size:16px; }
+  button { width:100%; padding:12px; background-color:#00cc44; color:white; font-weight:bold; border:none; border-radius:8px; cursor:pointer; font-size:16px; }
+  button:hover { background-color:#00aa33; }
+  .mensagem { text-align:center; margin-top:15px; color:#ffcc00; }
+  a { display:block; text-align:center; margin-top:10px; color:#ffaa00; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+</style>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+  <h2>Adicionar Novo Usuário</h2>
+  <input type="email" id="email" placeholder="Email do usuário">
+  <input type="password" id="senha" placeholder="Senha">
+  <button onclick="adicionarUsuario()">Adicionar Usuário</button>
+  <div class="mensagem" id="mensagem"></div>
+  <a href="gerencia.html">Voltar ao Painel</a>
+</div>
+
+<script>
+  // Configuração Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDVLhKPX1LyhGMp0NKb3dRhqWkYKzrzg20",
+    authDomain: "rene-b2c20.firebaseapp.com",
+    projectId: "rene-b2c20",
+    storageBucket: "rene-b2c20.firebasestorage.app",
+    messagingSenderId: "765841188716",
+    appId: "1:765841188716:web:5c3c20fc1509bfb759f549"
+  };
+
+  // Inicializa Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  async function adicionarUsuario() {
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+    const msg = document.getElementById("mensagem");
+    msg.innerText = "";
+
+    if (!email || !senha) {
+      msg.innerText = "Preencha todos os campos!";
+      return;
+    }
+
+    try {
+      await auth.createUserWithEmailAndPassword(email, senha);
+      msg.style.color = "#00cc44";
+      msg.innerText = `Usuário ${email} criado com sucesso!`;
+      document.getElementById("email").value = "";
+      document.getElementById("senha").value = "";
+    } catch (error) {
+      msg.style.color = "#ff4444";
+      msg.innerText = `Erro: ${error.message}`;
+    }
+  }
+</script>
+
+</body>
+</html>

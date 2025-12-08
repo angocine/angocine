@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANGOCINE - Download</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #001f3f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #FFD700;
+      text-align: center;
+    }
+    p {
+      text-align: center;
+      max-width: 500px;
+    }
+    .button {
+      background-color: #FFD700;
+      color: #001f3f;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .button:hover {
+      background-color: #FFC107;
+    }
+    .instructions {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      max-width: 500px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Download do Episódio</h1>
+
+  <p>Para baixar rápido e com estabilidade, recomendamos usar um gerenciador de downloads como <strong>1DM</strong> ou <strong>ADM</strong>. Caso não tenha, você pode abrir o link no navegador normalmente.</p>
+
+  <div>
+    <button class="button" id="copyBtn">📋 Copiar link para 1DM/ADM</button>
+    <a class="button" href="https://mega.nz/yourlinkhere" target="_blank">🌐 Abrir link no MEGA</a>
+  </div>
+
+  <div class="instructions">
+    <h3>Instruções para usar 1DM/ADM:</h3>
+    <ol>
+      <li>Copie o link clicando no botão "Copiar link".</li>
+      <li>Abra o app 1DM ou ADM.</li>
+      <li>Cole o link e inicie o download.</li>
+    </ol>
+  </div>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    const megaLink = "https://mega.nz/yourlinkhere"; // Substitua pelo link real do MEGA
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(megaLink).then(() => {
+        alert("✅ Link copiado! Agora abra no 1DM ou ADM para baixar rapidamente.");
+      }).catch(() => {
+        alert("❌ Não foi possível copiar o link. Copie manualmente: " + megaLink);
+      });
+    });
+  </script>
+
+</body>
+</html>

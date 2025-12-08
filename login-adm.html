@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login do Administrador</title>
+
+<!-- Firebase Auth -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<style>
+  /* RESET E BASE */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #001f3f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff;
+    overflow: hidden;
+    animation: fadeInBody 1s ease forwards;
+  }
+
+  @keyframes fadeInBody {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  .login-box {
+    width: 90%;
+    max-width: 400px;
+    background: #002952;
+    padding: 30px 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.5);
+    text-align: center;
+    animation: popIn 0.6s ease forwards;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .admin-photo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    overflow: hidden;
+    animation: fadeIn 1s ease 0.3s forwards;
+    opacity: 0;
+  }
+
+  .admin-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    animation: fadeIn 1s ease 0.5s forwards;
+    opacity: 0;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: fadeIn 1s ease 0.7s forwards;
+    opacity: 0;
+  }
+
+  input:focus {
+    box-shadow: 0 0 8px #ffcc00;
+    transform: scale(1.02);
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 12px;
+    background: #ffcc00;
+    color: #000;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    margin-top: 15px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    animation: fadeIn 1s ease 0.9s forwards;
+    opacity: 0;
+  }
+
+  .btn-login:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+
+  .erro {
+    color: #ff6666;
+    margin-top: 10px;
+    font-size: 14px;
+    display: none;
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px);}
+    100% { opacity: 1; transform: translateY(0);}
+  }
+
+  /* RESPONSIVO */
+  @media (max-width: 480px) {
+    .login-box {
+      padding: 20px 15px;
+    }
+
+    h2 { font-size: 20px; }
+    input, .btn-login { font-size: 16px; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+  <div class="admin-photo">
+    <img src="Screenshot_20251110-144413.jpg" alt="ADM">
+  </div>
+
+  <h2>RENÉ DESCARTE</h2>
+  <h3>Seja Bem-vindo CEO</h3>
+
+  <input type="email" id="usuario" placeholder="Email do ADM">
+  <input type="password" id="senha" placeholder="Senha">
+
+  <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+
+  <div class="erro" id="erro-msg">Erro ao entrar!</div>
+</div>
+
+<script>
+  // 🔥 CONFIGURAÇÃO DO FIREBASE
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
+    authDomain: "paineladminfilmes.firebaseapp.com",
+    projectId: "paineladminfilmes",
+    storageBucket: "paineladminfilmes.firebasestorage.app",
+    messagingSenderId: "76091758574",
+    appId: "1:76091758574:web:6aca9167578d2a5d2e20ff",
+    measurementId: "G-00ZFT2DCY0"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // 🔥 FUNÇÃO DE LOGIN REAL COM FIREBASE
+  function fazerLogin() {
+    const email = document.getElementById("usuario").value.trim();
+    const senha = document.getElementById("senha").value.trim();
+    const erro = document.getElementById("erro-msg");
+
+    erro.style.display = "none";
+
+    if (!email || !senha) {
+      erro.innerText = "Preencha email e senha.";
+      erro.style.display = "block";
+      return;
+    }
+
+    auth.signInWithEmailAndPassword(email, senha)
+      .then(userCredential => {
+        const dadosSessao = {
+          email: email,
+          uid: userCredential.user.uid,
+          expiraEm: Date.now() + (24 * 60 * 60 * 1000)
+        };
+        sessionStorage.setItem("usuarioLogado", JSON.stringify(dadosSessao));
+        window.location.href = "gerencia.html";
+      })
+      .catch(error => {
+        erro.innerText = traduzErro(error.code);
+        erro.style.display = "block";
+      });
+  }
+
+  function traduzErro(code) {
+    switch (code) {
+      case "auth/user-not-found": return "Usuário não encontrado!";
+      case "auth/wrong-password": return "Senha incorreta!";
+      case "auth/invalid-email": return "Email inválido!";
+      case "auth/too-many-requests": return "Muitas tentativas. Tente mais tarde!";
+      default: return "Erro inesperado!";
+    }
+  }
+</script>
+
+</body>
+</html>
