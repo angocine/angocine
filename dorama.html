@@ -6,9 +6,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <title>ANGOCINE - Dorama</title>
   <style>
-    /* TODO CSS É EXATAMENTE O MESMO DO ARQUIVO DE SÉRIES */
-    /* — mantido sem nenhuma modificação — */
-    
     :root{
       --bg-1:#001f3f;
       --panel:#00264d;
@@ -80,9 +77,140 @@
       display: block;
     }
 
+    .info {
+      padding: 12px 16px;
+      background: var(--panel);
+      margin: 12px;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .info h1 {
+      font-size: clamp(20px, 3.2vw, 28px);
+      margin: 6px 0;
+    }
+    .info p {
+      color: var(--muted);
+      margin: 0 0 8px 0;
+      line-height: 1.5;
+      font-size: 14px;
+    }
 
-/* (todo restante do CSS é exatamente o mesmo do arquivo anterior e já está incluído aqui) */
+    .generos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .genero {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .g1 { background: var(--genre-bg-a); }
+    .g2 { background: var(--genre-bg-b); }
+    .g3 { background: var(--genre-bg-c); }
+    .g4 { background: var(--genre-bg-d); }
 
+    #temporadas-container { padding: 6px 12px 12px 12px; }
+    .temporada {
+      background: var(--panel);
+      margin: 12px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+    .temporada-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background: var(--panel-2);
+      cursor: pointer;
+      gap: 10px;
+    }
+    .temporada-header h2 { margin: 0; font-size: 15px; color: #fff; }
+    .temporada-header .seta {
+      font-size: 16px;
+      color: var(--accent);
+      transition: transform .28s ease;
+    }
+    .temporada-header .seta.girar { transform: rotate(180deg); }
+
+    .episodios {
+      display: none;
+      padding: 10px 12px;
+      animation: fadeIn .28s ease;
+    }
+    .episodios.ativo { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .episodio {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: #003366;
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: background .18s ease, transform .12s ease;
+    }
+
+    .episodio:hover { background: #004080; transform: translateY(-1px); }
+
+    .episodio p {
+      margin: 0;
+      font-size: 14px;
+      color: #fff;
+      flex: 1;
+    }
+
+    .botao, .botao-acao {
+      padding: 6px 10px;
+      font-size: 12px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      white-space: nowrap;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    .botao:hover, .botao-acao:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    #notificacao {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00c851;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .4s;
+      z-index: 9999;
+    }
+
+    #notificacao.show { opacity: 1; pointer-events: auto; }
+
+    @media (max-width:420px){
+      .banner .capa { height: 320px; width: 200px; }
+      .episodio p { font-size: 13px; }
+      .botao, .botao-acao { padding: 6px 8px; font-size: 12px; }
+    }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -113,7 +241,6 @@
   <div id="notificacao"></div>
 
   <script>
-
     (function verificarSessao() {
       try {
         const usuario = JSON.parse(sessionStorage.getItem("usuarioLogado"));
@@ -127,11 +254,9 @@
         window.location.href = "index.html";
       }
     })();
-
   </script>
 
   <script>
-
     const firebaseConfig = {
       apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
       authDomain: "paineladminfilmes.firebaseapp.com",
@@ -141,7 +266,6 @@
       appId: "1:76091758574:web:6aca9167578d2a5d2e20ff",
       measurementId: "G-00ZFT2DCY0"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -155,19 +279,16 @@
     function copiarLinkMega(link) {
       if (!link) { mostrarNotificacao("Link indisponível"); return; }
       navigator.clipboard.writeText(link).then(() => {
-        mostrarNotificacao("📋 Link copiado!");
-      });
+        mostrarNotificacao("📋 Link copiado! Abra o 1DM e cole.");
+      }).catch(() => mostrarNotificacao("Erro ao copiar"));
     }
 
     (async function carregarDorama() {
-
       const params = new URLSearchParams(window.location.search);
       const slug = params.get("slug");
-
       if (!slug) return;
 
       try {
-
         const snapshot = await db.collection('doramas')
           .where('slug', '==', slug)
           .get();
@@ -180,63 +301,68 @@
 
         const item = snapshot.docs[0].data();
 
-
         document.getElementById('serie-imagem').src = item.imagem || '';
         document.getElementById('serie-titulo').textContent = item.titulo || '';
         document.getElementById('serie-descricao').textContent = item.descricao || '';
         document.getElementById('serie-ano').textContent = item.ano || '';
 
-
         const genBox = document.getElementById('serie-generos');
-        const generoRaw = item.genero || '';
-        const genArr = generoRaw.split(',').map(g => g.trim());
-        genBox.innerHTML = genArr
-          .map((g, i) => `<span class="genero g${(i % 4) + 1}">${g}</span>`)
-          .join('');
-
+        const generoRaw = item.generos || item.genero || '';
+        let genArr = [];
+        if (Array.isArray(generoRaw)) genArr = generoRaw;
+        else if (typeof generoRaw === 'string') genArr = generoRaw.split(',').map(g => g.trim()).filter(Boolean);
+        genBox.innerHTML = genArr.map((g,i) => `<span class="genero g${(i%4)+1}">${g}</span>`).join('');
 
         const container = document.getElementById('temporadas-container');
         container.innerHTML = '';
 
-
-        if (Array.isArray(item.temporadas)) {
-
-          item.temporadas.forEach(temp => {
-
+        if (Array.isArray(item.temporadas) && item.temporadas.length > 0) {
+          item.temporadas.forEach((temp) => {
             const bloco = document.createElement('div');
             bloco.className = 'temporada';
 
             const header = document.createElement('div');
             header.className = 'temporada-header';
-            header.innerHTML = `
-              <h2>${temp.numero}ª Temporada</h2>
-              <span class="seta">▼</span>
-            `;
+            const numeroTemp = (temp.numero !== undefined) ? temp.numero : (temp.numeroTemporada || '');
+            const nomeTemp = numeroTemp ? `${numeroTemp}ª Temporada` : 'Temporada';
+            header.innerHTML = `<h2>${nomeTemp}</h2><span class="seta">▼</span>`;
 
             const lista = document.createElement('div');
             lista.className = 'episodios';
 
-            temp.episodios.forEach(ep => {
+            if (Array.isArray(temp.episodios) && temp.episodios.length > 0) {
+              temp.episodios.forEach(ep => {
+                const epDiv = document.createElement('div');
+                epDiv.className = 'episodio';
+                const numeroEp = ep.numero !== undefined ? ep.numero : (ep.episodioNumero || '');
+                const linkEp = ep.link || ep.url || '';
+                epDiv.innerHTML = `
+                  <p>${numeroEp ? (numeroEp + 'º — Episódio') : 'Episódio'}</p>
+                  <div style="display:flex;gap:8px">
+                    <a href="${linkEp || '#'}" target="_blank" class="botao">${linkEp ? 'Abrir no MEGA' : 'Sem link'}</a>
+                    <button class="botao-acao" ${linkEp ? '' : 'disabled'}>Copiar link</button>
+                  </div>
+                `;
+                const btnCopiar = epDiv.querySelector('.botao-acao');
+                if (btnCopiar) btnCopiar.addEventListener('click', () => copiarLinkMega(linkEp));
+                lista.appendChild(epDiv);
+              });
+            } else {
+              const p = document.createElement('p');
+              p.style.color = 'var(--muted)';
+              p.style.padding = '8px';
+              p.textContent = 'Nenhum episódio disponível nesta temporada.';
+              lista.appendChild(p);
+            }
 
-              const epDiv = document.createElement('div');
-              epDiv.className = 'episodio';
-
-              epDiv.innerHTML = `
-                <p>${ep.numero}º — Episódio</p>
-                <div style="display:flex;gap:8px">
-                  <a href="${ep.link}" target="_blank" class="botao">Abrir no MEGA</a>
-                  <button class="botao-acao">Copiar link</button>
-                </div>
-              `;
-
-              epDiv.querySelector('.botao-acao')
-                .addEventListener('click', () => copiarLinkMega(ep.link));
-
-              lista.appendChild(epDiv);
-
-            });
+            if (item.temporadas.length === 1) {
+              lista.classList.add('ativo');
+              header.querySelector('.seta').classList.add('girar');
+            }
 
             header.addEventListener('click', () => {
+              document.querySelectorAll('.episodios').forEach(e => { if (e !== lista) e.classList.remove('ativo'); });
+              document.querySelectorAll('.temporada-header .seta').forEach(s => { if (s !== header.querySelector('.seta')) s.classList.remove('girar'); });
               lista.classList.toggle('ativo');
               header.querySelector('.seta').classList.toggle('girar');
             });
@@ -244,17 +370,36 @@
             bloco.appendChild(header);
             bloco.appendChild(lista);
             container.appendChild(bloco);
-
           });
-
+        } else if (item.link) {
+          const bloco = document.createElement('div');
+          bloco.className = 'temporada';
+          bloco.innerHTML = `
+            <div class="temporada-header">
+              <h2>Link</h2>
+              <span class="seta"></span>
+            </div>
+            <div class="episodios ativo" style="display:block;">
+              <div class="episodio">
+                <p>Link principal</p>
+                <div style="display:flex;gap:8px">
+                  <a href="${item.link}" target="_blank" class="botao">Abrir</a>
+                  <button class="botao-acao" onclick="copiarLinkMega('${item.link}')">Copiar link</button>
+                </div>
+              </div>
+            </div>
+          `;
+          container.appendChild(bloco);
+        } else {
+          container.innerHTML = `<p style="color:#fff;padding:12px;">Nenhuma temporada/episódio disponível.</p>`;
         }
 
       } catch (err) {
         console.error("Erro ao carregar dorama:", err);
+        document.getElementById('temporadas-container').innerHTML =
+          "<p style='color:#fff;text-align:center;padding:20px;'>Erro ao carregar. Veja console.</p>";
       }
-
     })();
-
   </script>
 
 </body>
