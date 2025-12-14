@@ -46,7 +46,6 @@
   .episodio{display:flex; gap:8px; align-items:center;}
   .ep-label{min-width:110px; font-weight:600; color:var(--muted);}
   .ep-input{flex:1;}
-  /* Responsivo */
   @media(max-width:600px){
     .menu{flex-direction:column; gap:10px;}
     .modal-box{padding:15px;}
@@ -67,11 +66,19 @@
   <a href="adm.html">Adicionar Conteúdo</a>
   <a href="#" onclick="abrirGerenciador()">Gerenciar Conteúdo</a>
   <a href="usuario.html">Adicionar Usuário</a>
-   <a href="home.html">Home</a>
+  <a href="home.html">Home</a>
 </div>
 
 <div id="gerenciar" class="container">
   <h2>Gerenciar Conteúdo</h2>
+
+  <!-- NOVA FUNÇÃO: Contador total de publicações -->
+  <div id="contadorBox" 
+       style="background:#00264d;padding:12px;margin-bottom:15px;border-radius:8px;
+              font-size:18px;font-weight:bold;text-align:center;">
+    Total de Publicações: 0
+  </div>
+
   <input id="buscar" placeholder="Pesquisar por título..." oninput="filtrar()">
   <table>
     <thead>
@@ -95,7 +102,12 @@
     <input id="editImagem" placeholder="URL da Imagem">
     <textarea id="editDescricao" placeholder="Descrição"></textarea>
     <input id="editLink" placeholder="Link do Filme (só filmes)">
+    
     <div class="temporadas-wrap" id="editTemporadasContainer"></div>
+
+    <!-- botão adicionar temporada -->
+    <button onclick="addTemporada()" style="background:#ffaa00;width:100%;margin:8px 0;">+ Adicionar Temporada</button>
+
     <button onclick="salvarEdicao()" style="background:#00cc44;color:white;width:100%;margin-top:10px;">Salvar</button>
   </div>
 </div>
@@ -127,9 +139,12 @@
     const lista = document.getElementById("lista");
     lista.innerHTML = "<tr><td colspan='4'>Carregando...</td></tr>";
 
+    let total = 0; // contador total 🔵
+
     for (let col of colecoes) {
       const snap = await db.collection(col).get();
       snap.forEach(doc => {
+        total++; // soma cada documento
         dados.push({
           id: doc.id,
           tipo: col,
@@ -138,6 +153,10 @@
         });
       });
     }
+
+    // Atualiza o contador
+    document.getElementById("contadorBox").innerText =
+      "Total de Publicações: " + total;
 
     exibir(dados);
   }
@@ -190,13 +209,18 @@
       item.temporadas.forEach(t => {
         const tempDiv = document.createElement('div');
         tempDiv.className = 'temporada';
-        tempDiv.innerHTML = `<div class="temporada-header">Temporada ${t.numero}</div><div class="episodios"></div>`;
+        tempDiv.innerHTML = `
+          <div class="temporada-header">Temporada ${t.numero}</div>
+          <div class="episodios"></div>
+        `;
         const epsWrap = tempDiv.querySelector('.episodios');
         t.episodios.forEach(e => {
           const epDiv = document.createElement('div');
           epDiv.className = 'episodio';
-          epDiv.innerHTML = `<div class="ep-label">Episódio ${e.numero}</div>
-                             <input class="ep-input" type="text" value="${e.link}" />`;
+          epDiv.innerHTML = `
+            <div class="ep-label">Episódio ${e.numero}</div>
+            <input class="ep-input" type="text" value="${e.link}" />
+          `;
           epsWrap.appendChild(epDiv);
         });
         tempContainer.appendChild(tempDiv);
@@ -204,6 +228,25 @@
     }
 
     document.getElementById("modal").style.display = "flex";
+
+    setTimeout(() => {
+      document.querySelectorAll(".temporada").forEach(temp => {
+        let header = temp.querySelector(".temporada-header");
+        if (!header.querySelector("button")) {
+          header.innerHTML += `
+            <div>
+              <button onclick="addEpisodio(this)" style="background:#00cc44;color:white;">+ Episódio</button>
+              <button onclick="removeTemporada(this)" class="del-btn">Eliminar</button>
+            </div>
+          `;
+        }
+        temp.querySelectorAll(".episodio").forEach(ep => {
+          if (!ep.querySelector("button")) {
+            ep.innerHTML += `<button onclick="removeEpisodio(this)" class="del-btn">X</button>`;
+          }
+        });
+      });
+    }, 50);
   }
 
   async function salvarEdicao() {
@@ -216,7 +259,6 @@
       link: document.getElementById("editLink").value,
     };
 
-    // temporadas
     const tempContainer = document.getElementById("editTemporadasContainer");
     const tempNodes = Array.from(tempContainer.querySelectorAll('.temporada'));
     const temporadas = tempNodes.map((tNode, tIdx) => {
@@ -233,10 +275,74 @@
 
     if(temporadas.length > 0) obj.temporadas = temporadas;
 
-    // salvar no Firebase
     await db.collection(editando.tipo).doc(editando.id).update(obj);
     document.getElementById("modal").style.display = "none";
     carregar();
+  }
+
+  function addTemporada() {
+    const container = document.getElementById("editTemporadasContainer");
+    const numero = container.children.length + 1;
+
+    const tempDiv = document.createElement("div");
+    tempDiv.className = "temporada";
+
+    tempDiv.innerHTML = `
+      <div class="temporada-header">
+        Temporada ${numero}
+        <div>
+          <button onclick="addEpisodio(this)" style="background:#00cc44;color:white;">+ Episódio</button>
+          <button onclick="removeTemporada(this)" class="del-btn">Eliminar</button>
+        </div>
+      </div>
+      <div class="episodios"></div>
+    `;
+
+    container.appendChild(tempDiv);
+  }
+
+  function removeTemporada(btn) {
+    const temp = btn.closest(".temporada");
+    temp.remove();
+    renumerarTemporadas();
+  }
+
+  function renumerarTemporadas() {
+    document.querySelectorAll(".temporada").forEach((t, i) => {
+      const header = t.querySelector(".temporada-header");
+      header.childNodes[0].textContent = "Temporada " + (i + 1);
+    });
+  }
+
+  function addEpisodio(btn) {
+    const temporada = btn.closest(".temporada");
+    const epWrap = temporada.querySelector(".episodios");
+    const numero = epWrap.children.length + 1;
+
+    const epDiv = document.createElement("div");
+    epDiv.className = "episodio";
+
+    epDiv.innerHTML = `
+      <div class="ep-label">Episódio ${numero}</div>
+      <input class="ep-input" type="text" placeholder="Link do episódio">
+      <button onclick="removeEpisodio(this)" class="del-btn">X</button>
+    `;
+
+    epWrap.appendChild(epDiv);
+  }
+
+  function removeEpisodio(btn) {
+    const ep = btn.closest(".episodio");
+    ep.remove();
+    renumerarEpisodios();
+  }
+
+  function renumerarEpisodios() {
+    document.querySelectorAll(".temporada").forEach(t => {
+      t.querySelectorAll(".episodio").forEach((ep, i) => {
+        ep.querySelector(".ep-label").textContent = "Episódio " + (i + 1);
+      });
+    });
   }
 </script>
 
