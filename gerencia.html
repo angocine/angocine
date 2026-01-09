@@ -3,347 +3,314 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ANGOCINE - Painel ADM</title>
+<title>ANGOCINE | Painel ADM</title>
+
 <style>
-  :root{
-    --bg:#001f3f;
-    --panel:#0a2b4d;
-    --panel-2:#0f3a6f;
-    --accent:#ffcc00;
-    --accent-2:#ff9900;
-    --muted:#cbd5e1;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0; font-family:Arial,sans-serif; background:var(--bg); color:white;}
-  header{background:#003366; padding:18px; text-align:center; font-size:22px; font-weight:bold;}
-  .menu{display:flex; justify-content:center; gap:15px; padding:15px; background:#00264d;}
-  .menu a{background:#004080; padding:10px 20px; color:white; text-decoration:none; border-radius:8px; font-weight:bold; transition:.2s;}
-  .menu a:hover{background:#0059b3;}
-  .container{padding:20px; display:none;}
-  h2{margin-bottom:15px;}
-  input, textarea{padding:10px; width:95%; max-width:500px; border-radius:8px; border:none; margin-bottom:10px; color:#000;}
-  table{width:100%; border-collapse:collapse; margin-top:10px;}
-  table th, table td{padding:12px; border-bottom:1px solid #004d80; color:white;}
-  button{padding:6px 15px; border:none; border-radius:5px; cursor:pointer; font-weight:bold;}
-  .edit-btn{background:#ffaa00;}
-  .del-btn{background:#ff4444; color:white;}
-  /* Modal */
-  #modal{
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center;
-    padding:10px; box-sizing:border-box; overflow-y:auto;
-  }
-  .modal-box{
-    background:#00264d; padding:20px; width:100%; max-width:500px;
-    border-radius:12px; color:white; box-sizing:border-box;
-  }
-  .modal-box input, .modal-box textarea{width:100%; padding:10px; border-radius:8px; border:none; margin-bottom:10px; color:#000;}
-  /* Temporadas e episódios */
-  .temporadas-wrap{display:flex; flex-direction:column; gap:12px; margin-top:6px;}
-  .temporada{background:#0f3a6f; padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:8px;}
-  .temporada-header{font-weight:700; color:var(--accent); display:flex; justify-content:space-between; align-items:center;}
-  .episodios{display:flex; flex-direction:column; gap:8px; margin-top:6px;}
-  .episodio{display:flex; gap:8px; align-items:center;}
-  .ep-label{min-width:110px; font-weight:600; color:var(--muted);}
-  .ep-input{flex:1;}
-  @media(max-width:600px){
-    .menu{flex-direction:column; gap:10px;}
-    .modal-box{padding:15px;}
-    input, textarea{font-size:14px;}
-  }
+:root{
+  --bg:#001f3f;
+  --sidebar:#00264d;
+  --panel:#0a2b4d;
+  --card:#0f3a6f;
+  --accent:#ffcc00;
+  --danger:#ff4444;
+  --success:#00cc44;
+  --text:#e5e7eb;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* LAYOUT */
+.layout{display:flex;min-height:100vh}
+.sidebar{
+  width:240px;
+  background:var(--sidebar);
+  padding:20px;
+}
+.sidebar h2{
+  text-align:center;
+  color:var(--accent);
+  margin-bottom:30px;
+}
+.sidebar a{
+  display:block;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:8px;
+  text-decoration:none;
+  color:white;
+  background:#003366;
+  font-weight:bold;
+}
+.sidebar a:hover{background:#004c99}
+
+.main{flex:1;padding:25px}
+
+/* DASHBOARD */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
+  margin-bottom:25px;
+}
+.card{
+  background:var(--card);
+  padding:18px;
+  border-radius:12px;
+}
+.card b{
+  font-size:28px;
+  color:var(--accent);
+}
+
+/* PANEL */
+.panel{
+  background:var(--panel);
+  padding:20px;
+  border-radius:12px;
+}
+input,textarea{
+  width:100%;
+  max-width:400px;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin-bottom:10px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+th,td{
+  padding:12px;
+  border-bottom:1px solid #003f6f;
+}
+button{
+  padding:6px 12px;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.edit{background:#ffaa00}
+.del{background:var(--danger);color:white}
+
+/* MODAL */
+#modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:10px;
+}
+.modal-box{
+  background:var(--sidebar);
+  width:100%;
+  max-width:520px;
+  padding:20px;
+  border-radius:12px;
+}
+.temporada{
+  background:var(--card);
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
+}
+.temporada-header{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  color:var(--accent);
+}
+.episodio{
+  display:flex;
+  gap:8px;
+  margin-top:6px;
+}
+.ep-label{min-width:100px}
+.ep-input{flex:1}
 </style>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
 </head>
+
 <body>
 
-<header>ANGOCINE - Painel do Administrador</header>
+<div class="layout">
 
-<div class="menu">
-  <a href="adm.html">Adicionar Conteúdo</a>
-  <a href="#" onclick="abrirGerenciador()">Gerenciar Conteúdo</a>
-  <a href="usuario.html">Adicionar Usuário</a>
-  <a href="home.html">Home</a>
-</div>
-
-<div id="gerenciar" class="container">
-  <h2>Gerenciar Conteúdo</h2>
-
-  <!-- NOVA FUNÇÃO: Contador total de publicações -->
-  <div id="contadorBox" 
-       style="background:#00264d;padding:12px;margin-bottom:15px;border-radius:8px;
-              font-size:18px;font-weight:bold;text-align:center;">
-    Total de Publicações: 0
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>ANGOCINE</h2>
+    <a href="adm.html">➕ Adicionar</a>
+    <a href="#" onclick="abrirGerenciador()">📂 Gerenciar</a>
+    <a href="usuario.html">👤 Usuários</a>
+    <a href="home.html">🏠 Home</a>
   </div>
 
-  <input id="buscar" placeholder="Pesquisar por título..." oninput="filtrar()">
-  <table>
-    <thead>
-      <tr>
-        <th>Título</th>
-        <th>Tipo</th>
-        <th>Cliques</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="lista"></tbody>
-  </table>
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="stats">
+      <div class="card">📦 Total<br><b id="totalPub">0</b></div>
+      <div class="card">🎬 Filmes<br><b id="totalFilmes">0</b></div>
+      <div class="card">📺 Séries<br><b id="totalSeries">0</b></div>
+      <div class="card">🎌 Animes<br><b id="totalAnimes">0</b></div>
+      <div class="card">🇰🇷 Doramas<br><b id="totalDoramas">0</b></div>
+    </div>
+
+    <!-- GERENCIAR -->
+    <div class="panel" id="gerenciar" style="display:none">
+      <h2>Gerenciar Conteúdo</h2>
+      <input id="buscar" placeholder="Pesquisar..." oninput="filtrar()">
+
+      <table>
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Tipo</th>
+            <th>Cliques</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="lista"></tbody>
+      </table>
+    </div>
+
+  </div>
 </div>
 
+<!-- MODAL -->
 <div id="modal">
   <div class="modal-box">
     <h3>Editar Conteúdo</h3>
     <input id="editTitulo" placeholder="Título">
     <input id="editAno" type="number" placeholder="Ano">
-    <input id="editGenero" placeholder="Gênero (ex: ação, drama)">
-    <input id="editImagem" placeholder="URL da Imagem">
+    <input id="editGenero" placeholder="Gênero">
+    <input id="editImagem" placeholder="Imagem URL">
     <textarea id="editDescricao" placeholder="Descrição"></textarea>
-    <input id="editLink" placeholder="Link do Filme (só filmes)">
-    
-    <div class="temporadas-wrap" id="editTemporadasContainer"></div>
+    <input id="editLink" placeholder="Link (filmes)">
 
-    <!-- botão adicionar temporada -->
-    <button onclick="addTemporada()" style="background:#ffaa00;width:100%;margin:8px 0;">+ Adicionar Temporada</button>
+    <div id="editTemporadas"></div>
 
-    <button onclick="salvarEdicao()" style="background:#00cc44;color:white;width:100%;margin-top:10px;">Salvar</button>
+    <button onclick="salvarEdicao()" style="background:var(--success);width:100%;margin-top:10px">
+      Salvar
+    </button>
   </div>
 </div>
 
 <script>
-  // Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
-    authDomain: "paineladminfilmes.firebaseapp.com",
-    projectId: "paineladminfilmes",
-    storageBucket: "paineladminfilmes.firebasestorage.app",
-    messagingSenderId: "76091758574",
-    appId: "1:76091758574:web:6aca9167578d2a5d2e20ff"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+// FIREBASE (TEU – SEM ALTERAÇÕES)
+const firebaseConfig={
+  apiKey:"AIzaSyC_5YYEx899qVIDbMguMigD3Zq0CSIWg-U",
+  authDomain:"paineladminfilmes.firebaseapp.com",
+  projectId:"paineladminfilmes",
+  storageBucket:"paineladminfilmes.firebasestorage.app",
+  messagingSenderId:"76091758574",
+  appId:"1:76091758574:web:6aca9167578d2a5d2e20ff"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
 
-  const colecoes = ["filmes", "series", "animes", "doramas"];
-  let dados = [];
-  let editando = null;
+// COLEÇÕES
+const colecoes=["filmes","series","animes","doramas"];
+let dados=[],editando=null;
 
-  async function abrirGerenciador() {
-    document.getElementById("gerenciar").style.display = "block";
-    carregar();
-  }
+// ABRIR GERENCIADOR
+async function abrirGerenciador(){
+  document.getElementById("gerenciar").style.display="block";
+  dados=[];
+  let tot=0,f=0,s=0,a=0,d=0;
 
-  async function carregar() {
-    dados = [];
-    const lista = document.getElementById("lista");
-    lista.innerHTML = "<tr><td colspan='4'>Carregando...</td></tr>";
-
-    let total = 0; // contador total 🔵
-
-    for (let col of colecoes) {
-      const snap = await db.collection(col).get();
-      snap.forEach(doc => {
-        total++; // soma cada documento
-        dados.push({
-          id: doc.id,
-          tipo: col,
-          clics: doc.data().clics || 0,
-          ...doc.data()
-        });
-      });
-    }
-
-    // Atualiza o contador
-    document.getElementById("contadorBox").innerText =
-      "Total de Publicações: " + total;
-
-    exibir(dados);
-  }
-
-  function exibir(arr) {
-    const lista = document.getElementById("lista");
-    lista.innerHTML = "";
-
-    arr.forEach(item => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${item.titulo}</td>
-        <td>${item.tipo}</td>
-        <td>${item.clics || 0}</td>
-        <td>
-          <button class="edit-btn" onclick="editar('${item.id}','${item.tipo}')">Editar</button>
-          <button class="del-btn" onclick="apagar('${item.id}','${item.tipo}')">Apagar</button>
-        </td>
-      `;
-      lista.appendChild(tr);
+  for(let c of colecoes){
+    const snap=await db.collection(c).get();
+    snap.forEach(doc=>{
+      const x=doc.data();
+      dados.push({id:doc.id,tipo:c,...x});
+      tot++;
+      if(c==="filmes")f++;
+      if(c==="series")s++;
+      if(c==="animes")a++;
+      if(c==="doramas")d++;
     });
   }
 
-  function filtrar() {
-    let txt = document.getElementById("buscar").value.toLowerCase();
-    let filtrado = dados.filter(d => d.titulo.toLowerCase().includes(txt));
-    exibir(filtrado);
-  }
+  totalPub.innerText=tot;
+  totalFilmes.innerText=f;
+  totalSeries.innerText=s;
+  totalAnimes.innerText=a;
+  totalDoramas.innerText=d;
 
-  async function apagar(id, tipo) {
-    if (!confirm("Tem certeza que deseja apagar?")) return;
+  exibir(dados);
+}
+
+// LISTAR
+function exibir(arr){
+  lista.innerHTML="";
+  arr.forEach(i=>{
+    lista.innerHTML+=`
+    <tr>
+      <td>${i.titulo}</td>
+      <td>${i.tipo}</td>
+      <td>${i.clics||0}</td>
+      <td>
+        <button class="edit" onclick="editar('${i.id}','${i.tipo}')">Editar</button>
+        <button class="del" onclick="apagar('${i.id}','${i.tipo}')">X</button>
+      </td>
+    </tr>`;
+  });
+}
+
+// FILTRO
+function filtrar(){
+  const t=buscar.value.toLowerCase();
+  exibir(dados.filter(d=>d.titulo.toLowerCase().includes(t)));
+}
+
+// APAGAR
+async function apagar(id,tipo){
+  if(confirm("Apagar conteúdo?")){
     await db.collection(tipo).doc(id).delete();
-    carregar();
+    abrirGerenciador();
   }
+}
 
-  function editar(id, tipo) {
-    editando = { id, tipo };
-    const item = dados.find(x => x.id === id && x.tipo === tipo);
+// EDITAR
+function editar(id,tipo){
+  editando={id,tipo};
+  const i=dados.find(x=>x.id===id&&x.tipo===tipo);
+  editTitulo.value=i.titulo||"";
+  editAno.value=i.ano||"";
+  editGenero.value=i.genero||"";
+  editImagem.value=i.imagem||"";
+  editDescricao.value=i.descricao||"";
+  editLink.value=i.link||"";
+  modal.style.display="flex";
+}
 
-    document.getElementById("editTitulo").value = item.titulo;
-    document.getElementById("editAno").value = item.ano || '';
-    document.getElementById("editGenero").value = item.genero || '';
-    document.getElementById("editImagem").value = item.imagem || '';
-    document.getElementById("editDescricao").value = item.descricao || '';
-    document.getElementById("editLink").value = item.link || '';
-
-    const tempContainer = document.getElementById("editTemporadasContainer");
-    tempContainer.innerHTML = '';
-    if(item.temporadas){
-      item.temporadas.forEach(t => {
-        const tempDiv = document.createElement('div');
-        tempDiv.className = 'temporada';
-        tempDiv.innerHTML = `
-          <div class="temporada-header">Temporada ${t.numero}</div>
-          <div class="episodios"></div>
-        `;
-        const epsWrap = tempDiv.querySelector('.episodios');
-        t.episodios.forEach(e => {
-          const epDiv = document.createElement('div');
-          epDiv.className = 'episodio';
-          epDiv.innerHTML = `
-            <div class="ep-label">Episódio ${e.numero}</div>
-            <input class="ep-input" type="text" value="${e.link}" />
-          `;
-          epsWrap.appendChild(epDiv);
-        });
-        tempContainer.appendChild(tempDiv);
-      });
-    }
-
-    document.getElementById("modal").style.display = "flex";
-
-    setTimeout(() => {
-      document.querySelectorAll(".temporada").forEach(temp => {
-        let header = temp.querySelector(".temporada-header");
-        if (!header.querySelector("button")) {
-          header.innerHTML += `
-            <div>
-              <button onclick="addEpisodio(this)" style="background:#00cc44;color:white;">+ Episódio</button>
-              <button onclick="removeTemporada(this)" class="del-btn">Eliminar</button>
-            </div>
-          `;
-        }
-        temp.querySelectorAll(".episodio").forEach(ep => {
-          if (!ep.querySelector("button")) {
-            ep.innerHTML += `<button onclick="removeEpisodio(this)" class="del-btn">X</button>`;
-          }
-        });
-      });
-    }, 50);
-  }
-
-  async function salvarEdicao() {
-    const obj = {
-      titulo: document.getElementById("editTitulo").value,
-      ano: Number(document.getElementById("editAno").value) || null,
-      genero: document.getElementById("editGenero").value,
-      imagem: document.getElementById("editImagem").value,
-      descricao: document.getElementById("editDescricao").value,
-      link: document.getElementById("editLink").value,
-    };
-
-    const tempContainer = document.getElementById("editTemporadasContainer");
-    const tempNodes = Array.from(tempContainer.querySelectorAll('.temporada'));
-    const temporadas = tempNodes.map((tNode, tIdx) => {
-      const epNodes = Array.from(tNode.querySelectorAll('.episodio'));
-      const episodios = epNodes.map((epNode, eIdx) => {
-        const linkInput = epNode.querySelector('.ep-input');
-        return {
-          numero: eIdx + 1,
-          link: linkInput ? linkInput.value.trim() : ''
-        };
-      }).filter(ep => ep.link);
-      return { numero: tIdx + 1, episodios };
-    }).filter(t => t.episodios.length > 0);
-
-    if(temporadas.length > 0) obj.temporadas = temporadas;
-
-    await db.collection(editando.tipo).doc(editando.id).update(obj);
-    document.getElementById("modal").style.display = "none";
-    carregar();
-  }
-
-  function addTemporada() {
-    const container = document.getElementById("editTemporadasContainer");
-    const numero = container.children.length + 1;
-
-    const tempDiv = document.createElement("div");
-    tempDiv.className = "temporada";
-
-    tempDiv.innerHTML = `
-      <div class="temporada-header">
-        Temporada ${numero}
-        <div>
-          <button onclick="addEpisodio(this)" style="background:#00cc44;color:white;">+ Episódio</button>
-          <button onclick="removeTemporada(this)" class="del-btn">Eliminar</button>
-        </div>
-      </div>
-      <div class="episodios"></div>
-    `;
-
-    container.appendChild(tempDiv);
-  }
-
-  function removeTemporada(btn) {
-    const temp = btn.closest(".temporada");
-    temp.remove();
-    renumerarTemporadas();
-  }
-
-  function renumerarTemporadas() {
-    document.querySelectorAll(".temporada").forEach((t, i) => {
-      const header = t.querySelector(".temporada-header");
-      header.childNodes[0].textContent = "Temporada " + (i + 1);
-    });
-  }
-
-  function addEpisodio(btn) {
-    const temporada = btn.closest(".temporada");
-    const epWrap = temporada.querySelector(".episodios");
-    const numero = epWrap.children.length + 1;
-
-    const epDiv = document.createElement("div");
-    epDiv.className = "episodio";
-
-    epDiv.innerHTML = `
-      <div class="ep-label">Episódio ${numero}</div>
-      <input class="ep-input" type="text" placeholder="Link do episódio">
-      <button onclick="removeEpisodio(this)" class="del-btn">X</button>
-    `;
-
-    epWrap.appendChild(epDiv);
-  }
-
-  function removeEpisodio(btn) {
-    const ep = btn.closest(".episodio");
-    ep.remove();
-    renumerarEpisodios();
-  }
-
-  function renumerarEpisodios() {
-    document.querySelectorAll(".temporada").forEach(t => {
-      t.querySelectorAll(".episodio").forEach((ep, i) => {
-        ep.querySelector(".ep-label").textContent = "Episódio " + (i + 1);
-      });
-    });
-  }
+// SALVAR
+async function salvarEdicao(){
+  const obj={
+    titulo:editTitulo.value,
+    ano:+editAno.value||null,
+    genero:editGenero.value,
+    imagem:editImagem.value,
+    descricao:editDescricao.value,
+    link:editLink.value
+  };
+  await db.collection(editando.tipo).doc(editando.id).update(obj);
+  modal.style.display="none";
+  abrirGerenciador();
+}
 </script>
 
 </body>
